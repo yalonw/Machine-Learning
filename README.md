@@ -13,7 +13,9 @@
     - pandas
     - matplotlib
     - seaborn
-    - graphviz
+    - graphviz ─ 決策樹
+    - [`opencc-python-reimplemented`](https://pypi.org/project/opencc-python-reimplemented/) ─ 簡繁轉換 
+    - [`jieba`](https://github.com/fxsjy/jieba) ─ 中文分詞 
 
 + 設定環境變數（Windows）
   - python.exe  -> C:\Users\user\AppData\Local\Programs\Python\Python37
@@ -80,11 +82,14 @@
 ### Step3: 利用模型預測  
 - 預測類型 predict：
   1. **分類（classification）**：  
-     有附答案的選擇題（無大小關係），如明天會不會下雨
+     - 有附答案的選擇題（無大小關係），如明天會不會下雨
+     - [`sklearn.tree.DecisionTreeClassifier`](https://github.com/yalonw/Machine_Learning/blob/master/classification.ipynb)
 
   2. **分群（cluster）**：  
-     沒附答案的選擇題（無大小關係）
+     - 沒附答案的選擇題（無大小關係）
+     - [`sklearn.cluster.KMeans`](https://github.com/yalonw/Machine_Learning/blob/master/cluster.ipynb)
 
   3. **回歸（regression）**：  
-     必有答案的計算題（有大小關係），如明天降雨機率多少
+     - 必有答案的計算題（有大小關係），如明天降雨機率多少
+     - [`sklearn.tree.DecisionTreeRegressor`](https://github.com/yalonw/Machine_Learning/blob/master/regression.ipynb)
 
