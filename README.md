@@ -77,13 +77,19 @@
   3. **強化學習/半監督式**（Reinforcement Learning）：  
      正確答案是由環境產生/反饋，如自駕車、機器人、遊戲。
 
-### Step2: 建立訓練模型  
+### Step2: 建立訓練模型 
+- 篩選特徵 feature？  
+  - 大多數的演算法會自動決定**特徵重要性**、自動選擇合適的特徵來建立模型；  
+    因此，**並不需要**特別去篩選特徵欄位，或刪除可能沒用的特徵欄位。
+
+  - 決策樹會自己決定特徵的重要性，而單純貝氏會透過**機率**決定特徵的重要性。
 
 ### Step3: 利用模型預測  
 - 預測類型 predict：
   1. **分類（classification）**：  
      - 有附答案的選擇題（無大小關係），如明天會不會下雨
      - [`sklearn.tree.DecisionTreeClassifier`](https://github.com/yalonw/Machine_Learning/blob/master/classification.ipynb)
+     - [`sklearn.naive_bayes.MultinomialNB`](https://github.com/yalonw/Machine_Learning/blob/master/poem_naive_bayes.ipynb)（文字型資料）
 
   2. **分群（cluster）**：  
      - 沒附答案的選擇題（無大小關係）
