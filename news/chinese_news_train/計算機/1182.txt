@@ -1,0 +1,111 @@
+日月光華 -- Programming精華區文章閱讀
+--------------------------------------------------------------------------------
+ 發信人: fw (dfd), 信區: Programming
+標  題: win32api如何得到函數的地址
+發信站: 日月光華站 (Mon Jun 26 11:48:11 2000) , 轉信
+
+我想編一個多線程,但需傳遞函數的地址
+不知win32api中有沒有這樣的函數, 而不必藉助VC或VB
+
+--
+※ 來源:·日月光華站 bbs.fudan.edu.cn·[FROM: 10.27.118.11]
+發信人: Beta (   ), 信區: Programming
+標  題: Re: win32api如何得到函數的地址
+發信站: 日月光華站 (Mon Jun 26 13:17:49 2000) , 站內信件
+
+C/C++中函數名就是函數的地址
+
+【 在 fw (dfd) 的大作中提到: 】
+: 我想編一個多線程,但需傳遞函數的地址
+: 不知win32api中有沒有這樣的函數, 而不必藉助VC或VB
+
+
+--
+※ 來源:·日月光華站 bbs.fudan.edu.cn·[FROM: 203.95.7.172]
+發信人: fw (dfd), 信區: Programming
+標  題: Re: win32api如何得到函數的地址
+發信站: 日月光華站 (Mon Jun 26 13:56:26 2000) , 轉信
+
+但用CreateThread時所傳遞的參數確不能直接用函數名
+我是想在access中調用api創建多線程,不好利用c語法,
+而且也沒有VB中的AddressOf.所以想在api中找到實現同樣功能的函數
+
+
+【 在 Beta (   ) 的大作中提到: 】
+: C/C++中函數名就是函數的地址
+
+
+--
+※ 來源:·日月光華站 bbs.fudan.edu.cn·[FROM: 10.27.118.11]
+發信人: littleboy (elan), 信區: Programming
+標  題: Re: win32api如何得到函數的地址
+發信站: 日月光華站 (Mon Jun 26 15:21:00 2000) , 轉信
+
+【 在 fw (dfd) 的大作中提到: 】
+: 但用CreateThread時所傳遞的參數確不能直接用函數名
+I think you can.
+: 我是想在access中調用api創建多線程,不好利用c語法,
+: 而且也沒有VB中的AddressOf.所以想在api中找到實現同樣功能的函數
+
+
+--
+芝麻開門....
+咣噹!!!
+
+※ 來源:·日月光華站 bbs.fudan.edu.cn·[FROM: 10.13.6.3]
+發信人: Beta (   ), 信區: Programming
+標  題: Re: win32api如何得到函數的地址
+發信站: 日月光華站 (Mon Jun 26 15:34:30 2000) , 站內信件
+
+你得按要求聲明CreateThread的函數指針函數, 請參考MSDN:
+HANDLE CreateThread(.., .., .., LPTHREAD_START_ROUTINE lpStartAddress, ...) ;
+DWORD WINAPI ThreadProc(LPVOID lpParameter) ;
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~你這麼聲明那個函數了嗎 ?
+
+【 在 fw (dfd) 的大作中提到: 】
+: 但用CreateThread時所傳遞的參數確不能直接用函數名
+: 我是想在access中調用api創建多線程,不好利用c語法,
+: 而且也沒有VB中的AddressOf.所以想在api中找到實現同樣功能的函數
+
+
+--
+※ 來源:·日月光華站 bbs.fudan.edu.cn·[FROM: 203.95.7.172]
+發信人: fw (dfd), 信區: Programming
+標  題: Re: win32api如何得到函數的地址
+發信站: 日月光華站 (Mon Jun 26 15:47:42 2000) , 轉信
+
+在vc中，我已可成功地調用CreateThread，即根據MSDN.
+但現在我想在access中調用，access利用vba編程，與vb類似，
+不可以用LPTHREAD_START_ROUTINE等
+
+
+
+【 在 Beta (   ) 的大作中提到: 】
+: 你得按要求聲明CreateThread的函數指針函數, 請參考MSDN:
+: HANDLE CreateThread(.., .., .., LPTHREAD_START_ROUTINE lpStartAddress, ...) ;
+: DWORD WINAPI ThreadProc(LPVOID lpParameter) ;
+: ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~你這麼聲明那個函數了嗎 ?
+
+
+--
+※ 來源:·日月光華站 bbs.fudan.edu.cn·[FROM: 10.27.118.11]
+發信人: littleboy (elan), 信區: Programming
+標  題: Re: win32api如何得到函數的地址
+發信站: 日月光華站 (Mon Jun 26 17:06:47 2000) , 轉信
+
+【 在 fw (dfd) 的大作中提到: 】
+: 在vc中，我已可成功地調用CreateThread，即根據MSDN.
+: 但現在我想在access中調用，access利用vba編程，與vb類似，
+: 不可以用LPTHREAD_START_ROUTINE等
+你去頭文件裡面看看這種類型到底是什么東東。
+
+--
+芝麻開門....
+咣噹!!!
+
+※ 來源:·日月光華站 bbs.fudan.edu.cn·[FROM: 10.13.6.3]
+
+ 
+
+--------------------------------------------------------------------------------
+[返回上一頁] [本討論區]

@@ -1,0 +1,64 @@
+日月光華 -- SE精華區文章閱讀
+--------------------------------------------------------------------------------
+ ASD Adaptive Software Development 自適應軟件開發
+AFE Application Family Engineering 應用族工程
+ASE Application System Engineering 應用系統工程
+BOA Basic Object Adaptor 基本對象適配器
+BMP Bean-Managed Persistence 構件管理的持久性
+BE Business Engineering 業務工程
+CMM Capability Maturity Model  能力成熟度模型
+CRC Class—Responsibility—Collaborator 類—責任—協作者
+CDR Common Data Representation  公共數據表示
+CORBA Common Object Request Broker Architecture 公共對象請求代理體系結構
+CBD Component Based Development 基於構件開發
+CIDL Component Implementation Definition Language 構件實現定義語言
+CIF Component Implementation Framework 構件實現框架
+CSE Component System Engineering 構件系統工程
+CMP Container-Managed Persistence 容器管理的持久性
+CCM CORBA Component Model CORBA構件模型
+CCM CORBA component model CORBA構件模型
+DNA Distributed interNet Architecture 分佈互聯網體系結構
+DTC Distributed Transaction Coordinator  分佈式事務協調程序
+DSSA Domain-Specific Software Architecture  領域特定的軟件體系結構
+DDE Dynamic Data Exchange 動態數據交換
+DII Dynamic Invocation Interface 動態激活接口
+DLL Dynamic Link Liberary 動態連接庫
+DSI Dynamic Skeleton Interface 動態骨架接口
+XP eXtreme Programming  極值程序設計
+GIOP General Inter-ORB Protocol ORB間通信的標準協議
+GUID Globally Unique Identifier  全局唯一標識符
+IMDB In Memory DataBase  駐留內存數據庫
+IDL Interface Definition Language 接口定義語言
+IID Interface Identifier 接口標識符
+IIOP Internet Inter-ORB Protocal 因特網ORB互聯協議
+JITA Just In Time Activation 即時激活機制
+LPC Local Procedure Call 本地過程調用
+MSMQ Microsft Message Queue Server  微軟消息隊列服務
+MIDL Microsoft Interface Definition Language 微軟接口定義語言
+MTS Microsoft Transaction Server 微軟事務服務器
+ODL Object Description Language 對象描述語言
+OMA Object Management Achitecture 對象管理體系結構
+OMG Object Management Group 國際對象管理組織
+OMG Object Managemnet Group 對象管理組織
+OMT Object Modeling Technology 對象建模技術
+OOSE Object Oriented Software Engineering 面向對象軟件工程
+ORB Object Request Broker 對象請求代理
+OOA Object Oriented Analysis  面向對象分析
+OOD Object Oriented Design  面向對象設計
+OSF Open Software Foundation 開放軟件基金會
+POA Portable Object Adapter 易移植的對象適配器
+POA Portable Object Adaptor 易移植對象適配器
+RPC Remote Procedure Call 遠程過程調用
+RSEB Reuse-Driven Software Engineering Business  複用驅動的軟件工程業務
+SCM Service Control Manager 服務控制管理程序
+ shared aggregation 共享聚集
+SPM Shared Property Manager  共享屬性管理程序
+SPICE Software Process Improvement and Capability dEtermine  軟件過程改進與能
+力確定
+UML Unified Modeling Language  統一的建模語言
+UUID Universally Unique Identifier 通用統一標識符
+
+ 
+
+--------------------------------------------------------------------------------
+[返回上一頁] [本討論區]

@@ -1,0 +1,38 @@
+發信人: Longhorn (Longhorn), 信區: Hardware
+標  題: 未來主流CPU何去何從---Intel:我“芯”依舊（續)
+發信站: 日月光華 (2002年07月02日05:17:51 星期二), 站內信件
+
+為了進一步搶佔低端市場，AMD決定讓Duron自生自滅，轉而用低主頻的Athlon XP替代
+這部分份額；而Intel雖然沒有遺棄Celeron，但已完全改變其核心，推出了基於Willam
+ette核心的Celeron處理器，從1.7GHz的主頻起跳。對於DIYer來講這並不是好消息，因
+為又要花錢更換主板了！但對Intel來講，這樣既可以讓0.18微米的生產線發揮餘熱，又
+可進一步提升Celeron的頻率，可謂一石二鳥。不過新Celeron 128KB 的L2 Cache僅是其
+前輩Tualatin核心Celeron III的一半，性能上處於一定劣勢，它只能通過高主頻來彌補
+這些缺陷；並且因為Tualatin核心採用0.13微米工藝，功耗（發熱量）相比較而言要小
+很多。若非SDRAM不足的帶寬限制了Celeron III的發揮，Intel推出新核心的Celeron處
+理器可謂一無是處。還記得Tualatin核心在推出之初便受到Intel市場策略的限制而無用
+武之地；如今Intel的此番舉動分明要將Tualatin核心的處理器逐出桌面市場，看來今後
+我們只能在利潤更為豐厚的移動處理器和入門級服務器市場中看到Tualatin的身影了。
+Intel經過這撥調整之後，桌面市場中的處理器將完全基於各類Pentium 4核心；並且有
+理由相信Willamette核心不會再存活很久，Celeron處理器到2GHz左右應該也會轉向Nor
+thwood核心。
+在移動處理器市場中，Intel的調整和新品推出將有更大的手筆。前段時間才推出的Pen
+tium 4-M，近期不斷降價，為推出更高頻率的版本留出了空間，下一個季度預計能突破
+2GHz大關。同時為了解決目前Pentium 4-M處理器的"吃電"能力，Intel將在明年第一季
+度推出代號為Banias的處理器，據稱能耗將比Pentium 4-M低10W。與之配套的名為Odem
+和Montara GM芯片組將分別針對一般和微型筆記本市場。Banias起始頻率為1.40GHz，而
+後將陸續推出低壓和超低壓版本，以期替代Tualatin核心涵蓋筆記本CPU市場的整個分塊
+。
+筆記本Celeron也將有進一步的變化--和桌面Celeron處理器一樣推出新核心的版本。最
+後一款Tualatin核心的筆記本Celeron將是主頻為1.4GHz的版本，之後將直接遷移到Nor
+thwood核心，推出之初為1.6和1.7GHz。但低壓和超低壓版本的筆記本Celeron在一段時
+間內仍將採用Tualatin核心。
+上文提到了AMD的Opteron，所以在Intel的故事臨近尾聲的時候，順便也提一下Intel的
+64位處理器未來的進展。隨著"Itanium2"（Mckinley）名號的正式亮相，Intel的IA-64
+架構有了新鮮血液。Mckinley體積比較龐大，採用0.18微米工藝製造，擁有0.5－2MB的
+L3 Cache。今年夏天，Intel還將對其進一步細分，推出名為Deerfield和Madison的處理
+器。它們都將採用0.13微米制造，分別針對雙路和四路服務器市場。同時，未來我們還
+將看到使用0.09微米工藝，並且兼容於Mckinley平臺的下一代IA-64處理器--Montecito
+。
+--
+※ 來源:·日月光華 bbs.fudan.edu.cn·[FROM: 10.83.6.1] 

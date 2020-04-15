@@ -1,0 +1,2305 @@
+日月光華 -- SE精華區文章閱讀
+--------------------------------------------------------------------------------
+ 發信人: jiachong (甲蟲), 信區: SE
+標  題: [轉載]軟件編程規範培訓實例與練習
+發信站: 日月光華 (2003年04月20日22:40:14 星期天), 站內信件
+
+【 以下文字轉載自 FDU_C.S. 討論區 】
+【 原文由 fdchosen 所發表 】
+
+軟件編程規範培訓實例與練習
+
+&#376;	問題分類
+1      邏輯類問題（A類）－指設計、編碼中出現的計算正確性和一致性、程序邏輯控制
+
+等方面出現的問題，在系統中起關鍵作用，將導致軟件死機、功能正常實現等嚴重問題；
+
+
+      接口類問題（B類）－指設計、編碼中出現的函數和環境、其他函數、全局/局部變
+
+量或數據變量之間的數據/控制傳輸不匹配的問題，在系統中起重要作用，將導致模塊間配
+
+合失效等嚴重問題；
+      維護類問題（C類）－指設計、編碼中出現的對軟件系統的維護方便程度造成影響的
+
+問題，在系統中不起關鍵作用，但對系統後期維護造成不便或導致維護費用上升；
+      可測試性問題（D類）－指設計、編碼中因考慮不周而導致後期系統可測試性差的問
+
+題。
+
+&#376;	處罰辦法
+	      問題發生率：
+	                 P=D/S
+	                 D=DA+0.5DB+0.25DC
+	
+	      其中：
+	              P   －問題發生率
+	              D   －1個季度內錯誤總數
+	              DA －1個季度內A類錯誤總數
+	              DB －1個季度內B類錯誤總數
+	              DC －1個季度內C類錯誤總數
+	              S   －1個季度內收到問題報告單總數
+      1）當D≥3時，如果P≥3％，將進行警告處理，並予以公告；
+      2）當D≥5時，如果P≥5％，將進行罰款處理，並予以公告。
+ 
+目   錄
+一、邏輯類代碼問題	第5頁
+1、變量/指針在使用前就必須初始化	第5頁
+【案例1.1.1】	第5頁
+2、防止指針/數組操作越界	第5頁
+【案例1.2.1】	第5頁
+【案例1.2.2】	第6頁
+【案例1.2.3】	第7頁
+【案例1.2.4】	第8頁
+3、避免指針的非法引用	第9頁
+【案例1.3.1】	第9頁
+4、變量類型定義錯誤	第10頁
+【案例1.4.1】	第10頁
+5、正確使用邏輯與&&、屏蔽&操作符	第17頁
+【案例1.5.1】	第17頁
+6、注意數據類型的匹配	第18頁
+【案例1.6.1】	第18頁
+【案例1.6.2】	第18頁
+7、用於控制條件轉移的表達式及取值範圍是否書寫正確	第20頁
+【案例1.7.1】	第20頁
+【案例1.7.2】	第21頁
+【案例1.7.3】	第22頁
+8、條件分支處理是否有遺漏	第24頁
+【案例1.8.1】	第24頁
+9、引用已釋放的資源	第26頁
+【案例1.9.1】	第26頁
+10、分配資源是否已正確釋放	第28頁
+【案例1.10.1】	第28頁
+【案例1.10.2】	第29頁
+【案例1.10.3】	第30頁
+【案例1.10.4】	第32頁
+【案例1.10.5】	第33頁
+【案例1.10.6】	第35頁
+【案例1.10.7】	第38頁
+11、防止資源的重複釋放	第39頁
+【案例1.11.1】	第39頁
+12、公共資源的互斥性和競用性	第40頁
+【案例1.12.1】	第40頁
+【案例1.12.2】	第40頁
+二、接口類代碼問題	第43頁
+1、對函數參數進行有效性檢查	第43頁
+【案例2.1.1】	第43頁
+【案例2.1.2】	第43頁
+【案例2.1.3】	第44頁
+【案例2.1.4】	第46頁
+【案例2.1.5】	第47頁
+【案例2.1.6】	第48頁
+2、注意多出口函數的處理	第49頁
+【案例2.2.1】	第49頁
+三、維護類代碼問題	第51頁
+1、 統一枚舉類型的使用	第51頁
+【案例3.1.1】	第51頁
+2、 註釋量至少佔代碼總量的20％	第51頁
+【案例3.2.1】對XXX產品BAM某版本部分代碼註釋量的統計	第51頁
+四、產品兼容性問題	第52頁
+1、系統配置、命令方式	第52頁
+【案例4.1.1】	第52頁
+【案例4.1.2】	第53頁
+2、設備對接	第54頁
+【案例4.2.1】	第54頁
+3、其他	第55頁
+【案例4.3.1】	第55頁
+五、版本控制問題	第58頁
+1、新老代碼中同一全局變量不一致	第58頁
+【案例5.1.1】	第58頁
+六、可測試性代碼問題	第59頁
+1、調試信息/打印信息的正確性	第59頁
+【案例6.1.1】	第59頁
+
+
+
+
+ 
+一、邏輯類代碼問題
+1、變量/指針在使用前就必須初始化
+【案例1.1.1】
+	C語言中最大的特色就是指針。指針的使用具有很強的技巧性和靈活性，但同時也帶來了
+
+很大的危險性。在XXX的代碼中有如下一端對指針的靈活使用：
+... ...
+
+    _UC *puc_card_config_tab; 
+
+... ...
+        Get_Config_Table( AMP_CPM_CARD_CONFIG_TABLE, 
+                          &ul_card_config_num, 
+                          &puc_card_config_tab, 
+                          use_which_data_area
+                        );
+... ...
+      b_middle_data_ok = generate_trans_middle_data_from_original_data(
+                                puc_card_config_tab,
+                                Ul_card_config_num)
+.... ...
+其中紅色部分巧妙的利用指向指針的指針為指針puc_card_config_tab賦值,而在蘭色部分
+
+使用該指針。但在Get_Config_Table函數中有可能失敗返回而不給該指針賦值。因此，以
+
+後使用的可能是一個非法指針。
+指針的使用是非常靈活的，同時也存在危險性，必須小心使用。指針使用的危險性舉世共
+
+知。在新的編程思想中，指針基本上被禁止使用（JAVA中就是這樣），至少也是被限制使
+
+用。而在我們交換機的程序中大量使用指針，並且有增無減。
+
+2、防止指針/數組操作越界
+【案例1.2.1】
+        在香港項目測試中，發現ISDN話機撥新業務號碼時，若一位一位的撥至18位，不
+
+會有問題。但若先撥完號碼再成組發送，會導致MPU死機。
+         
+處理過程：
+        查錯過程很簡單，按呼叫處理的過程檢查代碼，發現某一處的判斷有誤，本應為
+
+小於18的判斷，寫成了小於等於18。            
+
+結  論：
+         代碼編寫有誤。
+
+思考與啟示：
+	1、極限測試必須注意，測試前應對某項設計的極限做好充分測試規劃。
+          2、測試極限時還要注意多種業務接入點，本例為ISDN。對於交換機來說，任何
+
+一種業務都要分別在模擬話機、ISDN話機、V5話機、多種形式的話務臺上做測試。對於中
+
+繼的業務，則要充分考慮各種信令：TUP、ISUP、PRA、NO1、V5等等。
+
+【案例1.2.2】
+	對某交換類進行計費測試，字冠011對應1號路由、1號子路由，有4箇中繼群11,12,13,14
+
+(都屬於1#模塊)，前後兩個群分別構成自環。其中11,13群向為出中繼,12,14群向為入中繼
+
+，對這四個群分別進行計費設置，對出入中繼都計費。電話60640001撥打01160010001兩次
+
+，使四個群都有機會被計費，取話單後瀏覽話單發現對11群計費計次表話單出中繼群號不
+
+正確，其它群的計次表中出中繼群號正常。
+
+處理過程：
+	與開發人員在測試組環境多次重複以上步驟，發現11群的計次表話單有時正常，有時其出
+
+中繼群號就為一個隨機值，發生異常的頻率比較高。為什麼其它群的話單正常，唯獨11群
+
+不正常呢？11群是四個群中最小的群，其中繼計次表位於緩衝區的首位，打完電話後查詢
+
+內存發現出中繼群號在內存中是正確的，取完話單後再查就不正確了。
+
+結  論：
+	話單池的一個備份指針Pool_head_1和中繼計次表的頭指針重合，影響到第一個中繼計次
+
+表的計費。
+
+思考與啟示：
+	隨機值的背後往往隱藏著指針問題，兩塊內存緩衝區的交界處比較容易出現問題，在編程
+
+時是應該注意的地方。
+
+【案例1.2.3】
+【正            文】
+          在接入網產品A測試中，在內存數據庫正常的情況下的各種數據庫方面的操作都
+
+是正常的。為了進行數據庫異常測試，於是將數據庫內容人為地破壞了。發現在對數據庫
+
+進行比較操作時，出現程序跑死了現象。
+	經過跟蹤調試發現問題出現在如下一段代碼中:    
+1	for(i=0; i<pSysHead->dbf_count; i++)
+2	{
+3	            pDBFat = (_NM_DBFAT_STRUC *)(NVDB_BASE + DBFAT_OFFSET + i*DBFAT_
+
+LEN);
+4		if(fat_check(pDBFat) != 0) 
+5		{
+6               		pSysHead->system_flag = 0;
+7                		head_sum();
+8               		continue;
+9            	}
+10            	if(strlen(dbf->dbf_name) != 0 && strncmp(dbf->dbf_name, pDBFat-
+
+>dbf_name, strlen(dbf->dbf_name)) == 0)
+11            	{
+12               		dbf_ptr1 = (_UC *)pDBFat->dbf_head;
+13               		filesize = pDBFat->dbf_fsize;
+14                		break;
+15           	}
+16   	}
+        在測試時發現程序死在循環之中，得到的錯誤記錄是"Bus Error"（總線出錯），
+
+由此可以說明出現了內存操作異常。
+	經過跟蹤變量值發現循環變量i的閥值pSysHead->dbf_count的數值為0xFFFFFFFF，該值是
+
+從被破壞的內存數據庫中獲取的，正常情況下該值小於127。而pDBFat是數據庫的起始地址
+
+，如果pSysHead->dbf_count值異常過大，將導致pDBFat值超過最大內存地址值，隨後進行
+
+的內存操作將導致內存操作越界錯誤，因而在測試過程中數據庫破壞後就出現了主機死機
+
+的現象。
+	上面的問題解決起來很容易，只需在第一行代碼中增加一個判斷條件即可，如下：
+　for(i=0; i<pSysHead->dbf_coun && i < MAX_DB_NUM; i++)
+       // MAX_DB_NUM=127
+
+	這樣就保證了循環變量i的值在正常範圍內，從而避免了對指針pDBFat進行內存越界的操
+
+作。
+
+　　從上面的測試過程中，我們可以看到：如此嚴重的問題，僅僅是一個簡單的錯誤引起
+
+的。實際上，系統的不穩定往往是由這些看似很簡單的小錯誤導致的。這個問題給我們教
+
+訓的是：在直接對內存地址進行操作時，一定要保證其值的合法性，否則容易引起內存操
+
+作越界，給系統的穩定性帶來潛在的威脅。	
+
+【案例1.2.4】
+	近日在CDB並行測試中發現一個問題：我們需要的小區負荷話統結果總是為零，開始還以
+
+為小區負荷太小，於是加大短消息下發數量，但還為零，於是在程序中加入測試代碼，把
+
+收到的數據在BAM上打印出來,
+	結果打印出來的數據正常,不可能為零,仔細查看相關代碼,問題只可能在指針移位上有問
+
+題,果然在函數中發現一處比較隱蔽的錯誤。
+
+/* 功能:一個BM模塊內所有小區CDB側廣播消息忙閒情況     */
+/*************************************************************/
+void Cell_CBCH_Load_Static(struct MsgCB FAR *pMsg)
+      {
+	。。。
+	
+	memcpy((_UC *)&tmp_msg,pMsg,sizeof(tmp_msg));
+	pMsg=pMsg+sizeof(tmp_msg);//sizeof(tmp_msg)=10;本意是想移動10個字節,可是實際上
+
+指針移動了10*sizeof(struct MsgCB)個字節;
+	CellNum=tmp_msg.usCellNum;
+	。。。
+      }
+1
+      所以結構指針傳入函數後，如要進行指針移動操作，最好先將其轉化為_UC型再說。
+
+總之指針操作要小心為上。
+
+
+3、避免指針的非法引用
+【案例1.3.1】
+【正            文】
+在一次測試中，並沒有記得做了什麼操作，發現HONET系統的主機復位了，之後，系統又工
+
+作正常了。由於沒有打開後臺的跟蹤窗口，當時查了半天沒有眉目。過了半天，現象又出
+
+現了，而且這次是主機在反覆復位，系統根本無法正常工作了。
+我憑記憶，判斷應該是與當時正在測試的DSL板的端口配置有關。於是將板上所有端口配置
+
+為普通2B+D端口，重新加載在主機數據，現象消失。於是初步定位為主機在DSL端口處理過
+
+程中有重大錯誤。
+我在新的數據上努力恢復原出問題的現象，卻一直沒有重現，於是恢復原數據，加載後立
+
+即重現。並注意到，當DSL端口激活時，主機復位。仔細比較兩種數據的差別，發現出現主
+
+機復位問題的數據中DSL板配置了MNT/MLT端口，但是沒有做DSL端口之間的半永久數據。
+
+
+於是在程序中不斷加打印語句，通過後臺的DBWIN調試程序跟蹤，最後終於定位為：每當執
+
+行到portdsl.c的DeviceDslMsgProc()函數中處理U口透傳的
+if ( SPC_STATE_OK == pSpcCB->bySpcState )
+語句時，主機復位。但是該語句似乎並無不妥。
+再分析整個函數，pSpcCB在函數前部分已經被賦值，
+pSpcCB = SpcCB + (PortTable+index)->spcNo;
+但由於得到 index 後，沒有任何判斷，導致若MNT/MLT端口沒有做半永久，端口激活後，
+
+執行此部分函數，(PortTable+index)->spcNo 有可能為NULL_WORD，於是，運算後，pSpc
+
+CB 可能為非法值。此時主機在取進行判斷，就不知會導致什麼後果了。
+其實，改起來很簡單，只要在這兩句前增加一個判斷就行了。於是，修改代碼為：
+if ( (PortTable+index)->spcNo != NULL_WORD)
+{
+	pSpcCB = SpcCB + (PortTable+index)->spcNo;
+	if ( SPC_STATE_OK == pSpcCB->bySpcState )
+	{。。。}
+}
+	修改後，問題不再重現。
+經過分析可以發現，編譯環境是有很大的容許空間的，若主機沒有做充分的保護，很可能
+
+會有極嚴重的隨即故障出現。所以編程時一定要考慮各種可能情況；而測試中遇到此類死
+
+機問題，則要耐心的定位到具體是執行哪句代碼時出現的，再進行分析。因為問題很隱蔽
+
+，直接分析海一樣的代碼是很難發現的。
+
+
+4、變量類型定義錯誤
+【案例1.4.1】
+【正            文】
+        在FRI板上建幾條FRPVC，其DLCI類型分別為：10Bit/2bytes、10bit/3bytes、16
+
+bit/3bytes、17bit/4bytes、23bit/4bytes。相應的DLCI值為：16、234、991、126975、
+
+1234567，然後保存，重起MUX，觀察PVC的恢復情況，結果DLCI值為16、234和991的PVC正
+
+確恢復，而DLCI=126975的PVC恢復的數據錯誤為61439，而DLCI=1234567的PVC完全沒有恢
+
+復。
+        對於17/4類型，DLCI=126975的PVC在恢復時變成61439，根據這條線索，查找原因
+
+，發現126975-61439=65535，轉化二進制就是10000000000000000，也就是說在數據恢復或
+
+保存時把原數據的第一個1給忽略了。此時第一個想法是：在程序處理中，把無符號長整型
+
+變量當作短整型變量處理了，為了證實這個判斷，針對17bit/4bytes類型又重新設計測試
+
+用例：（1） 先建PVC，DLCI=65535，然後保存，重起MUX，觀察PVC的恢復情況，發現PVC
+
+能夠正確恢復；
+（2）再建PVC，DLCI=65536，然後保存，重起MUX，觀察PVC的恢復情況，此時PVC不能正確
+
+恢復。
+至此基本可以斷定原因就是出在這裡。帶著這個目的查看原代碼，發現在以下代碼中有問
+
+題：
+int	_GetFrDlci( DWORD* dwDlci, char* str, DWORD dwDlciType, DWORD dwPortType, 
+
+DWORD dwSlotID, DWORD dwPortID)
+{          DWORD  tempDlci;
+	char	szArg[80];
+1	char	szLine[80];
+	ID	LowPVCEP;
+            DWORD	dwDlciVal[5][2] =
+   		{ {16,1007}, {16,1007}, {1024,64511},
+   		  {2048,129023}, {131072,4194303} } ;
+            ．．．
+}
+
+typedef struct tagFrPppIntIWF
+{
+	．．．
+	WORD	wHdlcPort;
+	WORD	wHdlcDlci;      
+	WORD	wPeerHdlcDlci;   
+	WORD	wPeerOldAtmPort;
+	．．．	
+}	SFrPppIntIWFData;
+
+DWORD 	SaveFrNetIntIWFData ( DWORD *pdwWritePoint )
+{
+	BYTE	bSlotID, bPeerSlotID;
+	DWORD	dwCCID, dwPeerCCID;
+	WORD	wHdlcPort, wAtmPort, wIci, wPeerIci, wPeerHdlcPort ;
+	WORD	wCount;
+            ．．．
+}
+
+DWORD 	SaveFrNetExtIWFData ( DWORD *pdwWritePoint )
+{
+	BYTE	bSlotID;
+	DWORD	dwCCID, dwPeerCCID;
+	WORD	wHdlcPort, wAtmPort, wIci ;
+	WORD	wCount;
+	．．．
+unSevData.FrNetExtIWF[wCount].bSlotID	= bSlotID;
+	unSevData.FrNetExtIWF[wCount].wHdlcPort	= wHdlcPort;
+	unSevData.FrNetExtIWF[wCount].wHdlcDlci	= gFrPVCEP[bSlotID ][ gFrPVCC[bSlotID
+
+][dwCCID].dwLoPVCEP ].dwDLCI;
+	unSevData.FrNetExtIWF[wCount].wOldAtmPort	= wAtmPort;
+	unSevData.FrNetExtIWF[wCount].wAtmDlci	= gFrPVCEP[ bSlotID ][ gFrPVCC[bSlotID
+
+][dwCCID].dwHiPVCEP ].dwDLCI;
+	unSevData.FrNetExtIWF[wCount].dwMapMode = gFrPVCC[bSlotID][dwCCID].dwMapMode;
+
+
+　　　　　．．．
+       }
+
+
+DWORD RestoreFrNetExtIWFData ( WORD wSlotID, BYTE *pReadPoint )
+{
+	WORD	wCount, wTotalNetIWF;
+	BYTE	bSlotID, bHdlcDlciType, bAtmDlciType;
+	WORD	wOldAtmPort, wAtmDlci, wHdlcPort, wHdlcDlci;  
+	DWORD	dwMapMode, dwCIR, dwBe;
+	DWORD	dwCCID, dwResult, dwAtmPort;
+	wTotalNetIWF = g_MuxData.SevDataSize.wFrNetExtIWFNum;
+	．．．
+}
+
+DWORD RestoreFrHdlcIntIWFData ( WORD wSlotID, BYTE *pReadPoint )
+{
+	WORD	wCount, wTotalHdlcIWF;
+	DWORD	dwCCID, dwPeerCCID, dwAtmPort, dwPeerAtmPort;
+	DWORD	dwResult;
+	BYTE	bSlotID, bPeerSlotID;
+	WORD	wHdlcPort, wOldAtmPort, wCIR;
+	WORD	wPeerHdlcPort, wPeerOldAtmPort;
+            ．．．
+}
+
+        其中涉及DLCI值的變量都為WORD（即無符號短整型）類型，在程序的處理時，出
+
+現WORD和DWORD（無符號長整型）類型在一句中同時存在的情況，至此可以判斷問題出在這
+
+裡。由於DLCI值在不同類型時的取值範圍不同，前三種類型的取值範圍為16~991，第四種
+
+取值範圍為2048~126975，第五種取值範圍為131072~4194303，所以當採用前三種DLCI類型
+
+時，採用WORD類型最大值為65535，已經完全夠用了；而對於第四種類型時，其取值在超過
+
+65535時，獲取DLCI值的函數_GetFrDlci（）採用DWORD類型，而負責保存和恢復的兩個函
+
+數SaveFrNetExtIWFData（）和RestoreFrNetExtIWFData（），都把DLCI的值當作WORD類型
+
+進行處理，因此導致DLCI取值越界，於是程序把原本為長整型的DLCI強制轉換成整型，從
+
+而導致DLCI值在恢復時，比原數據小65536。而在程序運行過程中，這些數據保存在DRAM中
+
+，程序運行直接從DRAM中獲取數據，程序不會出錯；當FRI板復位或插拔後，需要從FLASH
+
+中讀取數據，此時恢複函數的錯誤就表現出來。
+       另一個問題是為什麼23/4類型的DLCI數據不能恢復？這是由於對於23/4類型的PVC
+
+，其DLCI的取值範圍為：131072~4194303，而程序強制轉換並恢復的數據最大隻能是6553
+
+5，所以這條PVC不能恢復。
+        至此，DLCI數據恢復出錯的原因完全找到，解決的方法是將DLCI的類型改為DWOR
+
+D類型。從這個案例可以看出，在程序開發中一個很低級的錯誤，將在實際工作中造成很嚴
+
+重的後果。
+
+【案例1.4.2】
+【正            文】
+        在FRI板上建幾條FRPVC，其DLCI類型分別為：10Bit/2bytes、10bit/3bytes、16
+
+bit/3bytes、17bit/4bytes、23bit/4bytes。相應的DLCI值為：16、234、991、126975、
+
+1234567，然後保存，重起MUX，觀察PVC的恢復情況，結果DLCI值為16、234和991的PVC正
+
+確恢復，而DLCI=126975的PVC恢復的數據錯誤為61439，而DLCI=1234567的PVC完全沒有恢
+
+復。
+        對於17/4類型，DLCI=126975的PVC在恢復時變成61439，根據這條線索，查找原因
+
+，發現126975-61439=65535，轉化二進制就是10000000000000000，也就是說在數據恢復或
+
+保存時把原數據的第一個1給忽略了。此時第一個想法是：在程序處理中，把無符號長整型
+
+變量當作短整型變量處理了，為了證實這個判斷，針對17bit/4bytes類型又重新設計測試
+
+用例：（1） 先建PVC，DLCI=65535，然後保存，重起MUX，觀察PVC的恢復情況，發現PVC
+
+能夠正確恢復；
+（2）再建PVC，DLCI=65536，然後保存，重起MUX，觀察PVC的恢復情況，此時PVC不能正確
+
+恢復。
+至此基本可以斷定原因就是出在這裡。帶著這個目的查看原代碼，發現在以下代碼中有問
+
+題：
+int	_GetFrDlci( DWORD* dwDlci, char* str, DWORD dwDlciType, DWORD dwPortType, 
+
+DWORD dwSlotID, DWORD dwPortID)
+{          DWORD  tempDlci;
+	char	szArg[80];
+	char	szLine[80];
+	ID	LowPVCEP;
+            DWORD	dwDlciVal[5][2] =
+   		{ {16,1007}, {16,1007}, {1024,64511},
+   		  {2048,129023}, {131072,4194303} } ;
+            ．．．
+}
+
+typedef struct tagFrPppIntIWF
+{
+	．．．
+	WORD	wHdlcPort;
+	WORD	wHdlcDlci;      
+	WORD	wPeerHdlcDlci;   
+	WORD	wPeerOldAtmPort;
+	．．．	
+}	SFrPppIntIWFData;
+
+DWORD 	SaveFrNetIntIWFData ( DWORD *pdwWritePoint )
+{
+	BYTE	bSlotID, bPeerSlotID;
+	DWORD	dwCCID, dwPeerCCID;
+	WORD	wHdlcPort, wAtmPort, wIci, wPeerIci, wPeerHdlcPort ;
+	WORD	wCount;
+            ．．．
+}
+
+DWORD 	SaveFrNetExtIWFData ( DWORD *pdwWritePoint )
+{
+	BYTE	bSlotID;
+	DWORD	dwCCID, dwPeerCCID;
+	WORD	wHdlcPort, wAtmPort, wIci ;
+	WORD	wCount;
+	．．．
+unSevData.FrNetExtIWF[wCount].bSlotID	= bSlotID;
+	unSevData.FrNetExtIWF[wCount].wHdlcPort	= wHdlcPort;
+	unSevData.FrNetExtIWF[wCount].wHdlcDlci	= gFrPVCEP[bSlotID ][ gFrPVCC[bSlotID
+
+][dwCCID].dwLoPVCEP ].dwDLCI;
+	unSevData.FrNetExtIWF[wCount].wOldAtmPort	= wAtmPort;
+	unSevData.FrNetExtIWF[wCount].wAtmDlci	= gFrPVCEP[ bSlotID ][ gFrPVCC[bSlotID
+
+][dwCCID].dwHiPVCEP ].dwDLCI;
+	unSevData.FrNetExtIWF[wCount].dwMapMode = gFrPVCC[bSlotID][dwCCID].dwMapMode;
+
+
+　　　　　．．．
+       }
+
+
+DWORD RestoreFrNetExtIWFData ( WORD wSlotID, BYTE *pReadPoint )
+{
+	WORD	wCount, wTotalNetIWF;
+	BYTE	bSlotID, bHdlcDlciType, bAtmDlciType;
+	WORD	wOldAtmPort, wAtmDlci, wHdlcPort, wHdlcDlci;  
+	DWORD	dwMapMode, dwCIR, dwBe;
+	DWORD	dwCCID, dwResult, dwAtmPort;
+	wTotalNetIWF = g_MuxData.SevDataSize.wFrNetExtIWFNum;
+	．．．
+}
+
+DWORD RestoreFrHdlcIntIWFData ( WORD wSlotID, BYTE *pReadPoint )
+{
+	WORD	wCount, wTotalHdlcIWF;
+	DWORD	dwCCID, dwPeerCCID, dwAtmPort, dwPeerAtmPort;
+	DWORD	dwResult;
+	BYTE	bSlotID, bPeerSlotID;
+	WORD	wHdlcPort, wOldAtmPort, wCIR;
+	WORD	wPeerHdlcPort, wPeerOldAtmPort;
+            ．．．
+}
+
+        其中涉及DLCI值的變量都為WORD（即無符號短整型）類型，在程序的處理時，出
+
+現WORD和DWORD（無符號長整型）類型在一句中同時存在的情況，至此可以判斷問題出在這
+
+裡。由於DLCI值在不同類型時的取值範圍不同，前三種類型的取值範圍為16~991，第四種
+
+取值範圍為2048~126975，第五種取值範圍為131072~4194303，所以當採用前三種DLCI類型
+
+時，採用WORD類型最大值為65535，已經完全夠用了；而對於第四種類型時，其取值在超過
+
+65535時，獲取DLCI值的函數_GetFrDlci（）採用DWORD類型，而負責保存和恢復的兩個函
+
+數SaveFrNetExtIWFData（）和RestoreFrNetExtIWFData（），都把DLCI的值當作WORD類型
+
+進行處理，因此導致DLCI取值越界，於是程序把原本為長整型的DLCI強制轉換成整型，從
+
+而導致DLCI值在恢復時，比原數據小65536。而在程序運行過程中，這些數據保存在DRAM中
+
+，程序運行直接從DRAM中獲取數據，程序不會出錯；當FRI板復位或插拔後，需要從FLASH
+
+中讀取數據，此時恢複函數的錯誤就表現出來。
+       另一個問題是為什麼23/4類型的DLCI數據不能恢復？這是由於對於23/4類型的PVC
+
+，其DLCI的取值範圍為：131072~4194303，而程序強制轉換並恢復的數據最大隻能是6553
+
+5，所以這條PVC不能恢復。
+        至此，DLCI數據恢復出錯的原因完全找到，解決的方法是將DLCI的類型改為DWOR
+
+D類型。從這個案例可以看出，在程序開發中一個很低級的錯誤，將在實際工作中造成很嚴
+
+重的後果。
+
+5、正確使用邏輯與&&、屏蔽&操作符
+【案例1.5.1】
+【案例描述】：由於C語言中位與比求模效率高，因而系統設計時，對於模128的地方都改
+
+為與127，系統定義的宏為#define MOD128  127和#define W_MOD    127(定義的宏的名字
+
+易引起誤解)，但實際程序中還是採取求模，從而引起發送窗口欲重發的和實際重發的不一
+
+致，最終導致鏈路復位此類嚴重問題，曾在定位此問題時花了不少時間。
+
+【處理過程】：處理過程如下：
+#define     MOD128          127  //隊列長128，當隊頭到128時，上其返回。
+#define    W_MOD           127 //發送窗口隊列，意義同上。
+在函數L2_TO_L1()中，有如下語句：
+        linkstate_ptr->SendWin.head = (head + 1) % W_MOD ;
+這裡當head=126時，SendWin.head = 0，這將造成發送窗口指針和隊列窗口指針錯位，造
+
+成鏈路復位;
+另外，在重發函數void INVOKE_RETRANSMISSION(_US logic_link,_US n_r)中，有如下語
+
+句：
+        retran_num = (LinkState[logic_link].Vs + MOD128  - (_UC)n_r) %  MOD128
+
+ ;
+        w_head = (LinkState[logic_link].SendWin.head + W_MOD  - retran_num) % 
+
+W_MOD ;
+第一個語句求欲重發的消息包個數，第二個語句求重發的起始位置，當Vs小於n_r時，將造
+
+成實際重發數小於欲重發數，同時造成實際起始重發位置和欲重發起始位置錯開，從而引
+
+起鏈路復位。上面三個語句應該做如下改動：
+        linkstate_ptr->SendWin.head = (head + 1) & W_MOD ;
+
+        retran_num = (LinkState[logic_link].Vs + MOD128  + 1 - (_UC)n_r) &  MO
+
+D128 ;
+        w_head = (LinkState[logic_link].SendWin.head + W_MOD + 1 - retran_num)
+
+ & W_MOD ;
+【結  論】：由於鏈路通信對系統效率要求很高，算法採用效率最高的，但位與（&）和求
+
+模（%）這小小的區別，造成的竟是鏈路復位這種嚴重的錯誤。
+
+【思考與啟示】：對這類問題，大家在閱讀代碼或代碼審查時一定要注意，仔細一點往往
+
+能發現問題，但在測試中來定位這種問題，花費的時間往往更長。
+
+6、注意數據類型的匹配
+【案例1.6.1】
+【案例描述】
+	下面通過測試中的一個例子來說明這個問題：命令DSP N7C是用來顯示NO7電路狀態的，其
+
+參數設備類型DID支持TUP和ISUP，參數信道號BSN支持多值輸入（最多支持32路查詢），正
+
+常情況下該命令沒有問題。但試了非正常情況下，問題就出來了。
+	1、首先試BSN參數越界情況，即參數BSN超過32路查詢，選了幾個數據段，問題就出來了
+
+。對於0&&300和0&&256，該命令返回結果不一致，對前者認為參數越界，對後者返回執行
+
+成功。
+	2、對於參數DID，選定一種設備類型（TUP或ISUP），讓參數BSN所包含的32路電路跨越T
+
+UP和ISUP，兩次結果是不一致的。
+【處理過程】
+	反饋到開發人員那裡，第一個問題是BAM的問題，第二個問題是SM的問題。
+【結  論】
+	1、為數據超出範圍溢出造成，int值賦值給BYTE，造成數據丟失。
+	2、問題的產生是因為查詢的第一個信道是TUP電路，但是卻按ISUP電路查詢。ISUP的維護
+
+處理函數判斷第一個信道不是ISUP信道，認為整個的PCM不是ISUP類型的PCM，返回全部的
+
+電路狀態為未安裝。消息處理不合理。TUP也會產生如此錯誤。
+
+【思考與啟示】
+	我們的MML命令並不是無懈可擊的，許多表面上的小問題，往往隱藏著代碼的缺陷和錯誤
+
+。
+
+【案例1.6.2】
+【正            文】
+當我們使用PC-LINT檢查代碼時，會發現大量的數據類型不匹配的告警，大部分情況下，這
+
+種代碼上存在的問題並不會引起程序功能實現上的錯誤，但有些情況下，也許會產生嚴重
+
+的問題：
+
+       一、不同數據類型變量之間賦值引起的問題，實際上，該類問題也可以分為幾種情
+
+況：
+1、直接賦值，比如，把一個WORD型變量賦給一個INT型變量，如果WORD型變量大於32767，
+
+INT型變量得到的就是一個負值了。 
+【例一】一次測試過程中發現，SDH送的告警在BAM調試窗口打印出紅色提示：File(XXX),
+
+Line(XXX):Invalid alarm id ,from: 7, AlarmId: 65463
+經過檢查數據發現，並沒有ID為65463的告警，分析上報的數據幀，發現上報的告警ID為B
+
+7，原來代碼中有一處強制類型轉換：
+            sdhAlmStru.AlarmId = (WORD)RecvBuffer[iTmpLen + 5];
+char型強制轉換成WORD型。B7就變成了FFB7，十進制就是65463。由於char是有符號型，B
+
+7的第8位為1，所以轉換後為FFB7，而不是代碼作者希望的00B7，如果第8位是0，或該變量
+
+是BYTE型，轉換就不會有問題了。
+2、函數形參和實參不一致，實際上和第一種情況本質上是一樣的，只是表現的形式不太一
+
+樣，這種情況也是代碼中經常出現的問題,下面例子是測試中曾經發現的一個小問題：
+【例二】在file01中的INT DebugMsgProc(char byMsg0, char byMsg1)函數，兩個形參都
+
+是char型，而實際傳入的參數都是BYTE型，結果函數中的如下語句：
+PrintfE(PID_RED," %d ticks time out!",byMsg1);
+在byMsg1大於127時，輸出錯誤的結果。
+
+    二、不同數據類型之間的比較操作
+
+在循環終止條件的判斷中，不同類型變量的比較操作是容易造成死循環錯誤的地方，同時
+
+也是開發人員容易忽視的地方，值得測試人員多加留意。下面兩個例子是該類錯誤的兩種
+
+典型情況：
+【例三】file02文件中某函數中如下代碼，可能造成死循環：
+         ......
+            int i;
+	WORD *pCheck  =(WORD*)p;
+	WORD wCheckSum=*pCheck;
+	pCheck++;
+
+	for(i=1;i<dwLen/2;i++)
+	{
+		wCheckSum^=(*pCheck);
+		pCheck++;
+	}
+	//binlen had already word alignment
+	return (wCheckSum);		
+	......
+   該段代碼是在DOS環境下用BC編譯的，由於循環變量i是int型（2個字節），而dwLen是
+
+DWORD型（4個字節），如果dwLen大於65536，那麼該函數就是死循環了。
+
+上面的例子是不同類型變量之間直接比較操作，還有一種情況是函數的返回值與另一不同
+
+類型的變量比較，見下面例子：
+【例四】file03.c文件中某函數中如下代碼，
+     		while( ftell(fp)< Part[3])
+		{.....
+                         }	
+  ftell返回long型，而Part是DWORD型，有符號變量和無符號變量的比較，可能造成死循
+
+環。
+
+類似的例子還有很多，類型不匹配的問題還有許多種情況，都是代碼中的隱患，有時會造
+
+成嚴重的後果，需要引起足夠的重視。對於該類問題，我們可以利用PC-LINT工具對代碼進
+
+行細緻的檢查。
+
+7、用於控制條件轉移的表達式及取值範圍是否書寫正確
+【案例1.7.1】
+【案例描述】：
+	在測試主機MPU板倒換功能時，如果MPU備份充分，倒換前後對處於激活狀態的電路應無影
+
+響，即不影響通話。但近期測試發現，如果兩局通過DT板進行一號對接，MPU備份倒換卻發
+
+生斷話。具體現象為：如果DT板的第1個PCM系統電路為故障，則MPU倒換時復位該DT板，如
+
+果DT板的第2個PCM系統電路為故障，則MPU倒換時復位下一塊DT。
+
+【處理過程】：
+	據查，MPU倒換時會自動復位處於“故障”態的電路，但由於計算錯誤（多加了32），錯
+
+復位了下一個PCM系統32路電路。
+【結  論】：
+	如此嚴重問題為什麼到今天才發現？因為我們在實驗室中一般採用同一單板的2個PCM系統
+
+自環進行測試，則不會在某單板上有故障和空閒電路共存，自環屏蔽了錯誤。
+【思考與啟示】：
+	自環是在測試環境下常用的一種提高效率的手段，但一旦條件允許，我們的測試工作應盡
+
+量模擬網上的實際環境進行。
+
+【案例1.7.2】
+	平時對計費功能進行測試的時候，瀏覽詳細話單都是比較注意話單本身的正確性，並沒有
+
+注意該命令對系統的影響。所以當瀏覽少量話單的時候，並沒有發現該命令的異常。但是
+
+當時間的跨度較大時，詳細話單數量較多，問題就出現了。執行如下命令：
+	LST AMA: TP=NRM, SD=1999&7&1, SA=YES;
+	當瀏覽了大約10萬張詳細話單後，終端與BAM的連接關閉。重建連接後，發現話單臺的命
+
+令不能執行。觀察BAM的性能，發現話單臺仍佔有CPU50%以上的利用率，說明原來的任務仍
+
+在執行。需要關一下話單臺才能恢復正常。
+	重複上述步驟，當終端與BAM的連接尚未關閉時主動斷開此次連接，結果同上。
+	反饋到開發人員那裡，發現該現象與設計的初衷是相違背的。本來話單臺控制最多輸出2
+
+00張話單，這是為了防止過多話單的輸出顯示會增加BAM的開銷，從而降低BAM的性能。查
+
+看一下源代碼，問題就發現了。
+	話單臺控制最多輸出200張話單
+程序如下
+    while(timeCur <= timeEnd)
+    {
+	timeCur += tsOneDay;//加一天
+
+	while(fileBill.Read(&rpt, sizeof(CBillReport)) == 
+		sizeof(CBillReport))
+	{
+                 .....................	
+                         //只輸出滿足條件的前200張話單
+	         if (++wBillCount == 200)
+	        {
+		break;
+	        }
+	}//一個文件查詢結束
+   }//所有文件查詢結束
+
+	在話單輸出200張之後，程序只退出一層循環，仍然會從下一天話單繼續輸出，導致向MM
+
+L發幀過多，造成MML和話單臺都被堵死。
+	修改ProcessQueryBill()函數
+     //只輸出滿足條件的前200張話單
+     if (++wBillCount == 200)
+     {
+         	timeCur = timeEnd + tsOneDay;//退出第二層循環,
+		while(timeCur <= timeEnd)
+			break;
+     }        
+	作上述修改後問題就不再出現了。
+	一些MML命令從完成的功能來講可能是沒什麼問題的，但其執行對系統性能的影響我們在
+
+測試時時往往給忽視了。在我們目前的BAM方案中，存在著多個終端協同工作，如果某個終
+
+端發出的命令在BAM中長時間獨佔著大部分系統資源，造成的後果是嚴重的。這是在設計時
+
+要避免的，在測試中要注意的問題。
+
+【案例1.7.3】
+【正            文】
+	在判斷模擬用戶端口是否反極性時有這樣一段程序：  
+      	if ( ( bsn >= g_wASL32StartPSN ) && 
+           ( ( ( bsn - g_wASL32StartPSN ) % 32 ) == 15  ||  ( ( bsn - g_wASL32
+
+StartPSN ) % 32 == 16 ) ) )
+			return TRUE;
+ 	if ( ( bsn % 16 ) == 7 || ( bsn % 16 ) == 8 )
+			return TRUE; 
+	 	return FALSE;
+
+	作者的本意是如果是32路用戶板（藍色字體判斷），就看端口號是否是第15和16路，如果
+
+是，就是反極性端口，返回TRUE，否則就不是，應該返回FALSE。但代碼表達的意思是：如
+
+果是32路用戶板並且端口號是15或16就返回真值，否則還要執行下邊語句。
+	當端口在32路用戶板上，但端口號不是15或16時，不同的32路端口的起始地址g_wASL32S
+
+tartPSN，會導致不同的非15、16端口被誤認為是反極性端口。舉個例子，當g_wASL32Sta
+
+rtPSN的值為3000時，端口號為3000（第一塊板上的第0個端口）就被認為是反極性端口，
+
+這與作者的意圖完全相悖。
+	可以將代碼修改如下：  
+    	if ( ( bsn >= g_wASL32StartPSN ) 
+		{
+			if  ( ( ( bsn - g_wASL32StartPSN ) % 32 ) == 15  ||  ( ( bsn -  g_wASL32Sta
+
+rtPSN ) % 32 == 16 ) ) )
+			return TRUE;
+		}
+ 		
+	 else
+		if ( ( bsn % 16 ) == 7 || ( bsn % 16 ) == 8 )
+			return TRUE; 
+	return FALSE;
+	通過這個例子，我覺得在代碼審查時應該留意在判斷條件較多的情況下，每個輸入是否都
+
+能正確輸出，在單元測試、集成測試、系統測試時要針對邊界值設計相應的測試用例。
+
+
+	判斷條件較多時開發人員也應該適當分開寫，既使代碼更易讀，又不容易出錯。
+
+8、條件分支處理是否有遺漏
+【案例1.8.1】
+【現  象】
+        在接入網主機程序的代碼審查中，發現dbquery.c的DBQ_Init_ANType函數中如下
+
+代碼段缺少應有的條件分支，在數據異常的情況下，會產生較嚴重的問題。
+
+【處理過程】
+         該錯誤比較隱蔽，現在說明如下：
+         Max2B1QStatTime 最大統計時間
+         Max2B1QStatPortNum最大統計端口數
+         MAX_2B1Q_STAT_PSN       最大統計內存分配數量 
+        其中：Max2B1QStatTime（最大統計時間）和Max2B1QStatPortNum
+（最大統計 端口數）的乘積不能大於MAX_2B1Q_STAT_PSN
+
+         程序如下：
+          //查詢數據庫，獲得Max2B1QStatTime的值
+	directQueryCond.tupleNo = 10;
+	error_code = DB_Query( RID_OTHERS_PARA_INFO, 1,
+						   (LPDBCondition)&directQueryCond,
+						   (BYTE FAR *)&tempstruct0 );
+	//查詢數據庫成功
+	if( error_code == DB_SUCCESS )
+	{
+		//tempstruct0.data是數據庫中為Max2B1QStatTime配置的值
+		if ( tempstruct0.data > MAX_2B1Q_STAT_PSN )
+			Max2B1QStatTime = MAX_2B1Q_STAT_PSN;
+		else if ( tempstruct0.data != 0 )
+			Max2B1QStatTime = tempstruct0.data;
+	}
+
+          //查詢數據庫，獲得Max2B1QStatPortNum的值
+	directQueryCond.tupleNo = 11;
+	error_code = DB_Query( RID_OTHERS_PARA_INFO, 1,
+						   (LPDBCondition)&directQueryCond,
+						   (BYTE FAR *)&tempstruct0 );
+	//查詢數據庫成功
+	if( error_code == DB_SUCCESS )
+	{
+
+	   //tempstruct0.data為數據庫中為Max2B1QStatPortNum配置的值，如果其缺省值和Ma
+
+x2B1QStatTime乘積值大於MAX_2B1Q_STAT_PSN的話：
+	   if ( (tempstruct0.data * Max2B1QStatTime) > MAX_2B1Q_STAT_PSN )          
+
+
+                      	Max2B1QStatPortNum = MAX_2B1Q_STAT_PSN / Max2B1QStatTim
+
+e;
+
+              //如果在合理範圍內且不為0的話：
+              else if ( tempstruct0.data != 0 )  
+		Max2B1QStatPortNum = tempstruct0.data;
+	}
+
+        此處if-else if 分支沒有判斷 值為0的情況，即數據庫為Max2B1QStatPortNum配
+
+置的值為0： tempstruct0.data == 0，則Max2B1QStatPortNum就為缺省值32。
+
+【結  論】
+        由於內存限制，Max2B1QStatTime（最大統計時間）和Max2B1QStatPortNum（最大
+
+統計端口數）的乘積不能大於MAX_2B1Q_STAT_PSN，
+        如果從數據庫中得到Max2B1QStatTime為MAX_2B1Q_STAT_PSN，而數據庫中最大統
+
+計端口數恰好為0，由於上述代碼沒有對tempstruct0.data == 0的情況進行判斷，Max2B1
+
+QStatPortNum為缺省值32，這樣Max2B1QStatTime和Max2B1QStatPortNum乘積已經是32倍M
+
+AX_2B1Q_STAT_PSN了，遠遠超過了設計內存的限制。
+         造成這種錯誤的原因是判斷語句對條件判斷不完整。
+
+【思考與啟示】
+        在代碼審查時，應該十分注意條件判斷的的完備性。好多問題就是因為條件判斷
+
+不完全造成的。
+
+
+9、引用已釋放的資源
+【案例1.9.1】
+【正            文】
+	在計費測試的過程中，用呼叫器進行大話務量呼叫測試。30路話路通過TUP自環呼叫另外
+
+30路話路，計費數據的設定是這樣的：通過計費情況索引對主叫計費，得到詳細話單。首
+
+先保證計費數據設定的正確性，打了幾次自環電話後，查看話單正常，則開始呼叫。
+呼叫幾萬次後停止呼叫，取話單進行觀察。發現這30路每次呼叫總會出現一張告警話單，
+
+其餘話單正常，該告警話單相對於話路來說是隨機出現的。
+	通知開發人員後，首先我們再次對計費數據進行了確認。某個用戶在某次呼叫產生了告警
+
+話單，其上一次和下一次呼叫的計費情況都正常，兩次呼叫之間的時間間隔只有幾秒鐘，
+
+排除了人為修改數據的可能。開發人員認為是CCB的問題，後來一查果然如此。
+	當中繼選線發生了同搶需要重新選線時，CCB的reset_CCB_for_reseatch_called_locati
+
+on()就會把有關的呼叫信息清掉，造成計費情況分析失敗，產生計費費用為0的告警話單。
+
+
+	更正reset_CCB_for_reseatch_called_location()中清除被叫信息的代碼，重選中繼時不
+
+清除被叫用戶這部分屬性。
+	思考與啟示：
+	1、在計費測試過程中，對話單的觀察很重要，不應該放過任何一個細小的疑點；
+	2、計費測試僅僅打幾次電話往往達不到效果，越接近用戶實際使用的情況越可能發現問
+
+題。
+
+【案例1.9.2】
+【案例描述】
+        在進行128模塊V5用戶CENTREX新業務測試時，偶然遇到一個怪現象：對群內一個
+
+V5ST用戶只開放MCT權限，在進行惡意呼叫追查時，有一次報惡意呼叫追查成功音只報了一
+
+半，當正要報出惡意呼叫的號碼時，業務中斷重新回到通話態，隨即重新追查一次，報“
+
+已申請其它新業務，本次申請不成功”。惡意呼叫追查與任何新業務都不會衝突，而且此
+
+用戶也只有惡意呼叫追查有權，可以肯定此時程序出問題了。為了重現，再次掛機，重新
+
+呼叫，應用此新業務，但這個現象一直沒有出現。大約反覆操作20遍，又出現了一次這樣
+
+的情況，顯然程序中可能存在某種問題。 
+
+【處理過程】
+        出現這個問題後，及時與開發人員A取得了聯繫，並一起試圖重現這個問題，通過
+
+許多次的反覆操作，又出現了一次這種情況。確認問題後，A表現出高度的責任心，馬上駕
+
+調試環境，反覆調測，終於在當天就逮住了狐狸尾巴：
+        1、當用戶接聽惡意呼叫者的電話, 並啟動惡意呼叫追查業務後, 在V5_CR_VOICE
+
+TONE狀態下, 只要聽MCT音的用戶用脈衝方式撥任意一個數字, 則立即停止送MCT音, 而將
+
+用戶切換回與惡意呼叫者的通話.  但是程序中沒有對撥號類型作判斷, 導致用戶若用音頻
+
+撥號也會作同樣的處理。
+        2、除了取消此次MCT服務, 將用戶切換回與惡意呼叫者的通話外,  如果不釋放M
+
+CT_HANDLE, 由於每個模塊只有一個這樣的資源,  則下一次使用MCT業務的用戶不能成功,
+
+ 因為會在申請MCT_HANDLE時失敗, V5模塊和ST模塊在這個地方處理都有問題, 沒有將MCT
+
+_HANDLE釋放掉,  對於V5用戶會聽新業務失敗音, 對於ST用戶會聽音樂。
+        當不停的撥測V5用戶的MCT業務時, 有時在聽音時, 可能由於網板有雜音等原因(
+
+或用戶碰了話機的按鍵),  導致DTR收到一位號, 則會立即停止此次MCT服務, 用戶會聽到
+
+MCT送音突然中斷, 然後恢復了與惡意呼叫者的通話. 而下次再用MCT時, 由於上面所述的
+
+原因, 會聽到新業務失敗音, 此次失敗後, 無論MCT_HANDLE分配成功與否, 該用戶的MCT標
+
+志都被置為1, 所以在用戶掛機時, 會將該模塊唯一的MCT_HANDLE資源釋放掉. 則以後該功
+
+能又可以正常實現。
+        在追查這個問題時，開發人員A又發現了一個可能導致死機的嚴重問題：在用戶啟
+
+動MCT服務, 正在聽報追查號碼的MCT音時, 若惡意用戶此時掛機,  CCB的處理中, 只針對
+
+ST用戶送DISCONNECT, 而對V5ST用戶送的是RELEASE消息, 這導致V5X收到此消息後, 將該
+
+V5ST用戶的cr2清除掉, V5_USER_TALBE[  ]. cr2變為0xFFFF, 這樣在V5_CR_VOICETONE超
+
+時後,  程序中會檢查cr2的狀態是否為HOLD, 當取cr2的內容時, 由於cr2已被清除, 會發
+
+生指針越界的GP錯誤。
+ 
+【結  論】
+        通過調測發現、定位並解決問題。
+
+【思考與啟示】
+        我們平常一些熟視無睹的業務或按正常流程操作沒有問題的業務，不能保證它就
+
+一定沒有問題，要善於抓住一絲一毫的異常現象。對於很難重現的問題千萬不要輕易放過
+
+，我們網上設備所出的問題很多都是一些在實驗室難以出現或很難重現的一些問題，一些
+
+顯而易見的問題一般都可消滅在實驗室，難就難在消滅一些隱藏很深的問題。說老實話，
+
+我們的產品還有許多問題 ，需要我們紮紮實實鍥而不捨的工作。
+
+10、分配資源是否已正確釋放
+【案例1.10.1】
+【正            文】
+          在對接入網A產品的網管軟件測試中，發現了一個WINDSOWS資源損耗的的問題：
+
+當網管軟件運行幾天後，WINDOWS總會出現“資源不夠”的告警提示。如果網管軟件不關掉
+
+再重新啟動的話，就會出現WINDOWS資源完全耗盡的現象，最終網管系統反應很慢，無法正
+
+常工作。
+	從現象上可以判斷出，網管軟件存在隱蔽的內存洩露或資源不釋放的問題，並且這種資源
+
+耗盡是一個緩慢的過程。如何定位這個問題呢？         
+	定位這種問題可以利用WINDOWS中的一個系統資源監視工具。打開Windows的“附件/系統
+
+工具/資源狀況”，這是一個系統資源、用戶資源、和GDI資源的實時監視工具。
+	工具有了，那麼如何發現導致不斷消耗資源的特定操作呢？
+	首先和開發人員共同探討，列出幾個最可能消耗資源的操作和一些操作組合，這樣就縮小
+
+了監視範圍，避免沒有範圍的碰運氣，否則如大海撈針。
+	監視前，首先重新啟動WINDOWS，最好不運行其他的程序，打開“系統狀況”這個監視工
+
+具，然後運行網管軟件，記下此時的資源狀況數據。
+	然後針對一個可疑的操作，快速大量地重複進行。這種重複性的操作可以利用QArun測試
+
+工具執行，QArun可以記錄操作者的一次操作步驟，然後按照設定的次數重複操作。操作後
+
+，觀察此時的資源狀況，並記下此時的數據，與操作前的數據比較，如果操作前後的數據
+
+數據沒有變化或變化很小，可排除此項操作，否則就可斷定此項操作會引起資源耗盡。
+
+
+	對其它可疑的操作和操作組合重複以上過程。
+	通過以上的步驟，終於找出引起資源耗盡的罪魁禍首。分析相應部分的代碼，發現引起資
+
+源耗盡原因有：內存洩露，畫筆和畫刷資源用完後未釋放等。
+
+【案例1.10.2】
+【正            文】
+      某產品後臺軟件版本，是用C++寫的，程序員在寫代碼時，經常在構造函數中申請一
+
+塊內存，而不釋放，在程序其他代碼中也經常只管申請，不管釋放。
+例如:
+ void WarnSvr::SaveWarnData()
+{
+     ......
+
+		  for(int m=0;m<RecordsInBuffer[EVENT_ALARM];m++)
+		  {
+			HISTORY_FILTER_INDEX* item=
+                new HISTORY_FILTER_INDEX;
+			item->Csn=Buffer[EVENT_ALARM][m].Csn;
+			
+                               item->Position=m 
+                +(RecordsInHistoryFile-RecordsInBuffer[EVENT_ALARM]);
+
+			//If a warn with a certain Csn is not in EventFilterIndex
+			//it is not necessary to be added to  HistoryFilterIndex
+			int item_total=EventFilterIndex.GetItemsInContainer();
+			BOOL find_flag=false;
+			for(int k=0;k<item_total;k++)
+			 if(EventFilterIndex[k]->Csn==item->Csn)
+				 {
+				 find_flag=true;
+				 break;
+				 }
+			if(find_flag)
+			  {
+				HistoryFilterIndex.Add(item);
+				if(HistoryFilterIndex.IsFull())
+				  ClearIndexEntry();
+			 }
+//建議在此處加上:                
+//                             else 
+//                                      delete item;
+}。
+        有的程序員認為，後臺運行的環境有大量內存，幾個字節的浪費不會造成死機等
+
+重大事故。然而，長時間累計起來，必然會造成資源緊張而出現故障。
+         實際上，這種思想是造成我們產品不穩定的原因之一。我們的主機在網上能運行
+
+幾個月幾年，大家對內存的分配釋放較敏感，而我們的後臺產品往往只能正常運行幾天。
+
+這個地方不注意也是原因之一吧。
+
+【案例1.10.3】
+【正            文】
+	在進行代碼審查過程中，造成內存洩漏的代碼比較多。下面舉幾種常見的內存洩漏錯誤，
+
+供測試人員在代碼審查中參考：
+	1. 函數有多個出口時，沒有在每個出口處對動態申請的內存進行釋放。一般在異常處理
+
+時容易出現這種錯誤。下面的代碼段就是這樣的例子：
+.....
+        pRecord = new char[pTable->GetRecordLength()];
+	assert(pRecord != NULL);
+
+	if (pTable->GoTop(FALSE) != DBIERR_NONE)
+		return; // 如果從這裡返回，pRecord將得不到釋放
+     .....
+        pTable->Close();
+	delete[] pRecord;
+      }
+
+
+	2. 給指針賦值時，沒有檢查指針是否為空，如果指針不為空，那麼指針原來指向的內存
+
+將丟失。請看如下代碼段：
+....
+	struct FileInfo * pdbffile = new struct FileInfo;
+	pdbffile->pfileinfo = new struct ffblk;
+	pdbffile->srcname = srcRootPath;
+	pdbffile->desname = desRootPath;
+	pdbffile->prev = NULL;
+	pfile = pdbffile;
+//賦值之前沒有檢查一下pfile是否為空，如果不為空，會造成pfile指向的內存丟失。
+
+
+	dbf_start_needed = FALSE;
+	dbf_Finish = FALSE;
+	flag_begined = TRUE;
+	if(FALSE == Copy(TRUE))
+	{
+		dbf_start_needed = TRUE;
+		WarnMsgOut("Error occurs while copying files in directory <dbf>,trying again
+
+.");
+	}
+    }
+
+	3. 連續二次內存動態分配，在第二次分配失敗時，忘記釋放第一次已經申請到的內存。
+
+
+	....
+	pMsgDB_DEV = (PDBDevMsg)GetBuff( sizeof( DBDevMsg ), __LINE__);
+	if( pMsgDB_DEV == NULL )
+		return;
+
+	pMsgDBApp_To_Logic = (LPDBSelfMsg)GetBuff( sizeof(DBSelfMsg), __LINE__ );
+	if( pMsgDBApp_To_Logic == NULL )
+		return;//此處返回造成pMsgDB_DEV指向的內存丟失
+	....
+	
+	4.代碼中缺少應有的條件分支處理，導致程序未執行任何操作而退出時，也可能沒有釋放
+
+應釋放的內存，這種情況一般是缺少應有的else分支，或switch語句的default分支沒有應
+
+有的處理。
+static void  OncePowerCmdHandle( struct HT_Appmsg  * msg )
+{
+	... ...
+    	pPower_test_answer =(struct _oncepower_test_answer *)GetBuff(sizeof(struc
+
+t _oncepower_test_answer),__LINE__);
+	if( pPower_test_answer == NULL_PTR )				
+		 return;
+	... ...
+	if (TSS_State[testpsn].state == TEST_DEV_BUSY ||
+		TSS_State[testpsn].state == TEST_DEV_ERROR )
+	{...
+	}
+	else if (TSS_State[testpsn].state == TEST_DEV_IDLE )
+	{...
+ 	}
+	// 缺少 else 分支，可能造成 pPower_test_answer 得不到釋放
+}
+
+造成內存洩漏的情況很多，以上是幾種典型的情況。
+雖然內存洩露一般出現在異常情況下，畢竟給系統造成很大的隱患，使系統的健壯性降低
+
+。測試人員在作代碼審查時，對上述幾種情況要尤其注意。
+
+【案例1.10.4】
+【正            文】在進行SAR的PDU包發收的測試過程中要同時考慮幾個邊界值,即發送
+
+包大小範圍[0-Nmax],SAR的PDU包接收的最大值Kmax,MBUF塊的大小M.在實測中,將SAR的PD
+
+U包接收的最大值設為2000(Kmax=2000B), MBUF的塊長設為512(M = 512B),則發送包大小的
+
+正確分支的取值為下限0,上限Nmax=2000,然後在0與2000之間隨機取若干值,再考慮MBUF的
+
+塊長,還可增加M倍數的若干選值及其附近值.以上是測試的一般思路,但由於很偶然的機會
+
+選擇包長2000,及Kmax=2000B,才發現問題.原因如下:
+MBUF塊長512,但塊中實際存放數據的只有500(MBUF頭上有2個長字,尾部有1個長字共12B只
+
+用於塊控制),而發送的包長正好是500的整數倍4,由於是整數倍,所以SAR(BT8230)從FREE鏈
+
+上摘成5個MBUF(原因從略),而SAR驅動只知道有4個MBUF,這樣到上層用戶時,只釋放4個MBU
+
+F,從而漏掉1個MBUF,經過很短一段時間後,內存即被耗盡.(此問題非常嚴重,因為在實際運
+
+用中,是500的整數倍的PDU包的概率較小,但一旦出現就會發生一次內存洩漏,這樣經過若干
+
+天或若干月的運行後會使系統崩潰)
+以前未發現此問題的原因是因為原來使用的緩衝塊長為2048,減去12B的控制信息,實際存放
+
+數據的長度為2036.由於只考慮了2048這個值,忽略了2036,所以在選取上下限中的若干值時
+
+,選取包的長度是2036的倍數的概率就非常小,因而未發現該問題.
+由於測試中一般很難將取值範圍中的所有值覆蓋全,所以在選取上下限中的若干取值時要格
+
+外仔細,考慮的方面儘可能全,因為很有可能其中某些值就是測試邊界值.凡是涉及的數字盡
+
+量選取,象該例中正確分支的測試邊界為0,2000,512及其整數倍,500 及其整數倍,12 及其
+
+整數倍等值,它們是必測的邊界值,而非可測可不測的隨機選取的所謂若干選值.
+
+【案例1.10.5】
+【正            文】
+ABIS.CPP中的函數rel_ABIS_CCB_conn( )中，在進行消息鏈表Msg_Queue[ces]的拆鏈操作
+
+時，對於相應的CCB只進行了一次拆鏈操作，即只拆除了一個節點，如果出現該CCB對應的
+
+消息節點不止一個的情況就會出現大量節點不能釋放的問題。
+if( Msg_Queue[ces].msghead != NULL_PTR )//message buffer notempty
+{
+      //get first message record
+      pMsgRecord = Msg_Queue[ces].msghead;
+      //release buffer-messages concerning with ccb_no
+      for( index = 0; index < MSGBUFFERNUM; index++ )
+      {
+         //這裡要對pMsgRecord的值進行判斷
+          if( (pMsgRecord != NULL_PTR) && pMsgRecord->CCB_no == 
+           ccb_no )         
+         {
+            //free the message buffer
+            if( pMsgRecord == Msg_Queue[ces].msghead )//head
+            Msg_Queue[ces].msghead = pMsgRecord->pnext;
+            else if( pMsgRecord == Msg_Queue[ces].msgtail )//tail
+            {
+                    Msg_Queue[ces].msgtail = pPrevMsgRecord;
+                    Msg_Queue[ces].msgtail->pnext = NULL_PTR;
+            }
+            else//not head and tail
+            {
+                   pPrevMsgRecord->pnext = pMsgRecord->pnext;
+            } 
+            //put buffer back to buffer pool
+            if( Msg_Buffer.empty_num == 0 )
+            {
+                  Msg_Buffer.linkhead = Msg_Buffer.linktail = pMsgRecord;
+                  pMsgRecord->pnext = NULL_PTR;//這裡將
+                                                                              
+
+pMsgRecord->pnext置為空
+                  Msg_Buffer.empty_num++;
+            }
+            else
+            {
+                  Msg_Buffer.linktail->pnext = pMsgRecord;
+                  pMsgRecord->pnext = NULL_PTR;//這裡將
+                                                                              
+
+pMsgRecord->pnext置為空
+                  Msg_Buffer.linktail = pMsgRecord;
+                  Msg_Buffer.empty_num++;
+            }
+         }        
+         else if( pMsgRecord == NULL_PTR )
+                     break;//end of if
+         //get next message record
+           pPrevMsgRecord = pMsgRecord;
+           pMsgRecord = pMsgRecord->pnext;//這時pMsgRecord為
+                                                                       NULL_PT
+
+R將跳出for循環語句
+      }//end of for
+}//end of if
+這裡在拆除一個節點後導致pMsgRecord為NULL_PTR，再進行判斷時將會跳出循環，這樣將
+
+不能保證所有與同一個CCB有關的節點均被拆除，這時如果與同一個CCB對應的消息節點不
+
+止一個則這些消息節點均無法釋放，造成可用的節點數不斷減少，直接影響系統的建鏈過
+
+程，給系統的穩定帶來隱患。
+後與開發人員聯繫，根據這段算法編寫小程序驗證了該問題，並提出了相應的解決方案，
+
+消除了該隱患。
+
+【案例1.10.6】
+【正            文】
+       1、建立一個呼叫，並保持通話。在AM控存監控操作界面中觀察通話建立在哪一塊
+
+FBI板上。
+       2、將有通話的FBI板拔出，觀察通話情況，此時話音中斷，但信令仍然保持。觀察
+
+AM控存監控操作界面和E3M板2K網界面，發現AM側因為檢測到光纖已斷，將通話在CTN、E3
+
+M板上佔用的時隙置為空閒，即在AM控存監控操作界面和E3M板2K網界面觀察不到時隙佔用
+
+情況。
+      3、分別在30秒、1分鐘、3分鐘時將拔出的FBI板插回原槽位，發現每次插回FBI板後
+
+話音立即恢復。
+     4、觀察BAM上的打印消息，發現打印的各模塊佔用CTN板大HW上DM時隙的空閒個數比
+
+較混亂。打印消息如下圖所示：
+     
+     其中：
+ 
+     1） 由於模塊1、2、3、4各佔用CTN板上兩條大HW，每個DM時隙個數為256（即由兩條
+
+大HW的兩個DM組成，由於與OPT相聯的大HW上有兩個保留時隙，因此此DM上空閒時隙個數為
+
+：254。
+     2）  由於E3M板只與一條大HW相聯，故每個DM上空閒的時隙個數為：128。
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+    本現象對應2個問題：idle_count打印混亂，BM釋放故障光路的時隙和對應的CCB、無
+
+線信道等資源。
+     
+1、idle_count打印混亂是由於函數restore_one_hw中的一些處理不當造成的，以前被當作
+
+B型機的歷史遺留問題沒有重視；
+
+2、B2模塊有2條光路，如果斷掉其中一條，模塊狀態不會改變，原B型機程序對此不作任何
+
+處理，但應該增加這個功能，以免光路故障導致資源吊死。
+
+     解決方法：
+     問題一： 將函數restore_one_hw中原代碼作如下改動：
+                             mod_dm[mod][i].tail.tsn = idle_dm_head + 125;
+		        ( idle_dm_head == 384 ) ?
+		            mod_dm[mod][i].idle_count += TS_PER_DM - 1:
+		            mod_dm[mod][i].idle_count += TS_PER_DM - 1;
+
+		改為：
+			if ( idle_dm_head != 384 )
+			{
+		                     mod_dm[mod][i].tail.tsn = idle_dm_head + 127;
+			           mod_dm[mod][i].idle_count += TS_PER_DM;
+			}
+ 
+			 else
+			{
+			           mod_dm[mod][i].tail.tsn = idle_dm_head + 126;
+			           mod_dm[mod][i].idle_count += TS_PER_DM - 1;
+			}
+      問題二分析如下： 
+           目前的模塊狀態是由IPATH調用DBMS模塊的邊檢查實現的，只要存在一條可用
+
+的光路，即認為相鄰模塊為正常，對於具體的OPT板上的時隙狀態的維護沒有與呼叫控制的
+
+接口。具體的OPT板狀態功能的檢測是由IPATH完成的，在BM側沒有專門維護OPT和MC2板的
+
+模塊，將轉交OS組處理。
+
+       總結：
+         在拔出FBC板後，通話話音被中斷，AM/CM側已將與被拔出的FBC  板相關的資源
+
+全部置為不可用，此時BM側主機程序也應該與AM/CM側一致，釋放掉所佔用的資源，並將原
+
+通話的信令連接斷開。這可能是由於不同模塊的開發人員缺少相互間瞭解而造成的，即AM
+
+/CM側與BM側開發人員交流不夠。作為測試人員對類似兩個或多個模塊相關的部分應該充分
+
+進行測試，不要想當然，往往是看起來不可能出問題的地方也容易測出問題。
+
+【案例1.10.7】
+	在進行有關排隊指示的系統測試中，先閉塞掉基站的所有業務信道TCH，進行呼叫，再直
+
+接掛機或超時釋放，發現TC存在中繼資源吊死的問題。   
+	由於此問題重現，後經定位分析，發現是ccb超時後收到AIR發來的clear cmd，進入 rel
+
+_one_bm_res( )時，由於ccb所登記的CIC還放在pre_occupied_res，並沒有放入occuped_
+
+res，而rel_one_bm_res()只對存入occuped_res的CIC進行判斷，並向AIE發UNBOOKCIC，而
+
+沒有對存入pre_occupied_res的CIC進行判斷，並UNBOOK掉，導致TC的中繼資源吊死。應在
+
+超時函數或釋放函數中對pre_occupied_res的CIC進行處理。
+在此過程中，CIC資源還存放在老CCB的pre_occupied_res中，在超時函數或釋放函數中均
+
+未對pre_occupied_res中的CIC進行處理（即向AIE UNBOOK），導致TC中繼資源吊死。
+	在超時函數RR_time_out()中timer_name為TN_WAIT_ASS_READY時，和釋放函數rel_one_b
+
+am_res()中增加對CCB的pre_occupied_res中的CIC的判斷和釋放處理。
+       	在使用資源同時，就要周密地考慮好資源的釋放問題，只有這樣，才能使我們的
+
+系統不斷地穩定下來。
+ 	資源的釋放對於我們的交換機來說是至關重要的，一點點的疏忽都可能最終使我們的交
+
+換機因為無資源使用而死掉，要知道，“千里長堤，毀於蟻穴”。
+
+11、防止資源的重複釋放
+【案例1.11.1】
+【正            文】
+       當進行大話務量呼叫時，在統計代碼中出現AIE收到UNBOOK CIC消息時，發現自身
+
+電路狀態為空閒，出現一個斷言。這說明AIE電路電路被誤釋放了。
+	這個問題出現的原因有以下幾種：
+	1. RR可能發錯了電路號，導致AIE狀態錯誤。
+	2. AIE可能發起資源核查，失敗後將本控制表項釋放了。
+	3. RR可能發起了重複釋放操作，導致AIE的某個表項連續收到兩個UNBOOK消息。
+	分析完了可能的情況，就要一一分析定位。
+	在可能原因一發生的情況下，RR發來的UNBOOK消息所帶的AIR連接號和模塊號會錯誤，導
+
+致我們會出現斷言。而在測試數據結果文件中，沒有出現這個斷言，因此可能原因一不成
+
+立。
+	在可能原因二發生的情況下，AIE收到資源核查失敗消息的數目應該不是零。但是實際情
+
+況下統計結果中收到資源核查失敗消息的個數為零，說明情況二也不成立。
+	由上分析，這個問題只可能是由於RR重複釋放造成的。但是為何會發生重複釋放，這需要
+
+進行進一步分析。
+	從呼叫的正常流程來看，是不會產生重複釋放的，因此我們懷疑該問題與異常流程有關。
+
+從統計代碼中查找異常流程，發現該次統計中BSC內切換流程多次出現問題，具體原因是由
+
+於切換過程中在目標小區申請不到信道，產生切換失敗造成的。因此集中研究這個流程，
+
+發現存在問題如下：
+	當原小區向目標小區發送內部切換請求消息時，帶來了AIR和AIE的各項信息，而目標小區
+
+收到這些信息後就將之保存在自身的佔用資源中。如果目標側申請信道失敗，就會向源側
+
+發內部切換拒絕消息，而後產生本地釋放。由於在釋放前目標側RR沒有將佔用資源中的AI
+
+R和AIE信息清除，因此導致重複釋放時對AIR和AIE發起了釋放操作。由於AIR釋放時有保護
+
+機制，所以不會產生問題，而AIE沒有保護機制，新CCB就將AIE電路釋放掉了。而後當老C
+
+CB在通話結束後發起釋放時，就產生了重複釋放。
+	從上面分析可以看出，這個問題是由於RR釋放流程的錯誤造成的，因此，我們要對此加以
+
+修改，在新CCB釋放前將AIR和AIE信息從預佔資源中清除。
+        RR的釋放是一個非常複雜的過程，如何正確的整理資源，確保資源的合理釋放，
+
+這是擺在我們面前的一個艱鉅的問題，我們要仔細分析各種可能發生的情況，正確釋放各
+
+種資源，即不會弔死資源，也不會產生重複釋放。
+
+12、公共資源的互斥性和競用性
+【案例1.12.1】
+【正            文】
+	試驗環境：CPX8216 CPCI 機架、vxWorks操作系統、Tornado1.0.1調試環境
+	測試用例：測試板間通信性能。從接口板A向接口板B循環發送消息，通過超級終端觀察消
+
+息的收發情況。
+	測試結果：每發送一定數量的消息幀後，會出現發送地址出錯現象。
+	原因分析：接收板回送緩衝區指針給發送板，是採用memcpy單字節拷貝的方式。若發送速
+
+度快於接收速度，兩板競用發送板系統總線訪問緩衝區指針所在的共享內存，導致數據訪
+
+問衝突。memcpy過程被打斷，即出現發送板讀發送地址出錯現象。
+	採用四字節拷貝函數bcopyLongs傳送發送緩衝區指針，問題解決。
+	共享內存的訪問設計，除了考慮互斥外，還有總線競用問題。
+
+【案例1.12.2】
+【正            文】
+問題描述：
+        在進行主BCCH載頻互助新功能開發的並行聯調測試的過程中，發現了以下的問題
+
+：在數管臺設置“TRX倒換是否允許”為“是”，進行設定整表後，關閉基站其中配有4個
+
+TRX的小區的主BCCH所在的TRX電源，發現對應小區重新初始化併成功，也就是載頻互助成
+
+功。這個時候從後臺對該小區所在的站點進行4級復位，同時重新打開之前關閉的該小區的
+
+原配主BCCH所在TRX的電源，發現對應小區初始化失敗。
+問題定位：
+         在問題定位開始，先是查看了載頻互助相關代碼在站點初始化流程中的處理。B
+
+TSM程序初始化過程中，先是判斷這一次初始化之前是否發生過載頻互助，若發生過，再判
+
+斷原配主BCCH（即數據庫中實際配置的主BCCH所在的TRX）是否已經恢復（即能正常建立T
+
+EI，能正常設置該TRX對應的RC屬性，總之能正常開工）。若載頻互助發生過，且原配主B
+
+CCH所在的TRX（CoTRXGroupForBts[BtsNo].MainTRX）已經恢復，即把之前進行互助的TRX
+
+ （CoTRXGroupForBts[BtsNo].AidTRX）的數據和原配的主BCCH所在TRX的數據交換回來，
+
+並重新進行初始化。表面上看原理應該沒有什麼邏輯錯誤，怎麼會出現初始化不成功呢？
+
+
+我們對程序中的每一個可能導致該問題的變量加打印調試程序，然後重現該問題，終於在
+
+打印出來的信息中發現在載頻互助發生後其互助的主BCCH所在的TRX與實際數據配置主BCC
+
+H所在的TRX為同一TRX，這有問題，因為載頻互助的實質就是實際數據配置主BCCH所在的T
+
+RX不能正常開工而借用其他TRX作為主BCCH。於是我們根據此線索查詢了所有BTSM的程序，
+
+沒有發現問題的根源。於是我們查了最近合進版本的相關模塊的程序，終於找出了問題的
+
+根源所在。
+在載頻互助程序中以全局變量ptrBTS_CONFIG_MAP[BtsNo].TRX_no_BCCH_in表示當前實際運
+
+行的主BCCH所在的TRX號，是隨時變化的；以CoTRXGroupForBts[BtsNo].MainTRX表示原配
+
+的主BCCH所在的TRX號，是固定的。兩者在系統開工的系統開工的接口函數FetchOneSiteC
+
+onfig（ ）中賦了相同的值：該函數的409行有賦值語句CoTRXGroupForBts[BTS_no_temp]
+
+.MainTRX = ptrBTS_CONFIG_MAP[BTS_no_temp].TRX_no_BCCH_in。以前函數FetchOneSite
+
+Config（）只是在系統開工時才調用過一次，故CoTRXGroupForBts[BTS_no_temp].MainTR
+
+X 在系統開工以後是不變的，但是在DBMI同步開發的整改中，作了如下處理：在每一次數
+
+據動態設定後，先判斷站點下有沒有發生過載頻互助，若發生過則試圖先把目前進行互助
+
+的TRX的數據與實際數據配置成主BCCH的TRX的數據倒換回來，然後進行站點初始化。問題
+
+就出現在這，在DBMI中認為DB中原配的主BCCH的TRX是ptrBTS_CONFIG_MAP[BTS_no_temp].
+
+TRX_no_BCCH_in，而且每次進行站點初始化時都調用函數FetchOneSiteConfig（），這樣
+
+將導致CoTRXGroupForBts[BTS_no_temp].MainTRX的值與DB中實際原配主BCCH所在TRX不一
+
+致，從而導致主BCCH的相關數據倒換是出現錯誤，最終導致相應小區初始化不成功。    
+
+                             
+收穫及反思：這個問題的出現是因為主機程序兩個功能模塊DBMI與BTSM之間的開發缺少相
+
+互溝通引起，如果在開發之前兩個模塊的的開發人員先約定好各個全局變量的用途，如果
+
+DBMI與BTSM兩個功能模塊都認為CoTRXGroupForBts[BTS_no_temp].MainTRX是實際數據的原
+
+來的主BCCH所在的TRX號，那麼就不會出現以上問題。現在BSC主機程序的各個功能模塊都
+
+同時合進了許多代碼，各個功能模塊之間的聯繫與衝突肯定會存在，這就需要開發人員在
+
+開發設計方案時就相互溝通，否則以上由於功能模塊間的的衝突引起的問題肯定會存在，
+
+而且可能不那麼明顯的暴露了出來。我們的產品埋伏的炸彈的機會就越多。
+
+ 
+二、接口類代碼問題
+1、對函數參數進行有效性檢查
+【案例2.1.1】
+【案例描述】
+     某交換類產品BAM後臺管理系統使用了註冊表存儲後臺系統數據自動備份時間；在對
+
+數據自動備份進行系統測試時考慮到註冊表中數值的任意性，很有可能被測系統沒有對注
+
+冊表中存儲的值作相應的合法性檢測，從而有可能對系統產生不良影響。
+
+【處理過程】
+通過審查源程序及實際驗證，發現果然存在問題。BAM有關數據自動備份程序程序在得到該
+
+項值後只做了簡單處理，沒有對時間進行合法性驗證。若自動備份操作發生在前後臺通訊
+
+的高峰期或者是在設置數據需要對數據庫進行操作時，對系統可能會產生重大影響。
+
+【結  論】
+系統使用註冊表中的數據同樣要進行各種情況下的測試，包括合法的和不合法的數據設置
+
+。
+
+【思考與啟示】
+系統的數據輸入有多種渠道，不僅包括人機命令、系統INI文件，還包括註冊表等其它途徑
+
+；在測試時對各種情況都要進行全方位的測試，從而保證系統的可靠性。
+
+【案例2.1.2】
+【案例描述】
+	設計規定07的TSS板是不支持數字用戶內，外線強測的，在對數字用戶內，外線測試正常
+
+後，有意強測一正在通話的數字用戶，卻發現返回報告：
+用戶外線測試
+------------
+                      測試時間 = 1999-06-03 16:48:06
+                        號首集 = 0
+                      用戶號碼 = 6540136
+                   BAM測試狀態 = 正常
+                  主機測試狀態 = 正常
+                          AVAG = 0.08   
+                          AVBG = 0.29   
+                          AVAB = -0.21  
+                          DVAG = 0.62   
+                          DVBG = 0.62   
+                          DVAB = 0.00   
+                           RAG = >10M
+                           RBG = >10M
+                           RAB = >10M
+                            RL = >10M
+                           CAG = 0.001 
+                           CBG = 0.001 
+                           CAB = 0.001 
+                          結論 = 斷線
+結論斷線肯定是錯誤的，測試期間查詢TSS狀態，顯示TSS空閒，可見主機返回的報告是錯
+
+誤的。
+
+【處理過程】
+	修改命令ADD RTSTI對應的存儲過程，問題解決。
+
+【結  論】
+	用戶外線測試主機沒有判用戶是否為數字用戶。
+
+【思考與啟示】
+	測試一項功能，既要測試系統提供的功能要滿足要求，系統沒有提供的功能看是否誤執行
+
+了，導致錯誤的結論。
+
+【案例2.1.3】
+【正            文】
+	一般開發人員認為函數的參數很簡單，但在實際設計和調用函數時，很容易犯一些參數方
+
+面的錯誤。下面就一些例子進行一些分析，希望能引起大家的重視。
+	1、函數設計中，使用函數內局部變量保存下次函數重新調用時需要的保留值。
+void SlaverDownLoadProc( WORD wMsgLength , void *pTempMsgAddr )
+{
+	void *pTempTargetAddr ;
+
+	SSLAVERLOADMSG *pSTempSlaverLoadMsg = ( SSLAVERLOADMSG * )pTempMsgAddr;	
+	
+	if ( COMMON_BOARD_LOAD_PROGRAM == pSTempSlaverLoadMsg->m_ucCmd )
+		pTempTargetAddr = ( void * )SDRAM_LOAD_PROG_START_ADDR ;
+#ifndef MMX  /* MMX板的數據不用加載，用備份方式*/
+	else if ( COMMON_BOARD_LOAD_FPGA == pSTempSlaverLoadMsg->m_ucCmd )
+		pTempTargetAddr = ( void * )SDRAM_FPGA_START_ADDR ;
+              ...
+            
+            case BEGIN_LOAD :
+       	if (  ( LOAD_MIDDLE_FRAME == pSTempSlaverLoadMsg->m_ucLoadCmd ) 
+	    &&( ( dwRecFrameNum % 0xFF ) == pSTempSlaverLoadMsg->m_ucOrderNo )   
+	   )
+	{
+	/* 序號和幀的命令字都是合法的，保存BUFFER */
+		memcpy( ( BYTE * )pTempTargetAddr , ( BYTE * )pSTempSlaverLoadMsg + 5 , wMsg
+
+Length - 5 ) ;
+	/* 5 = m_ucBoardType + m_ucCmd + m_ucSerialNo + m_ucLoadCmd + m_ucOrderNo */
+
+
+		dwRecFrameNum ++ ;
+                ...
+        
+	這裡每收到一幀都要調用此函數，而每次進入時，函數將pTempTargetAddr賦值為兩個固
+
+定值中的一個，導致收到的新幀將上一次的幀數據覆蓋。顯然，函數將本應作為全局變量
+
+的參數pTempTargetAddr錯誤地定義為局部變量。
+	2、當函數的輸入參數較多，並且互相之間有聯繫時，是較易出錯的地方。
+	在測試串口任務時，我們發現一個錯誤：當加入新用戶時，當用戶名輸入到四十一個字符
+
+時，程序死掉。經過調試跟蹤，發現是在input函數中調用GetString，但是在對第二個參
+
+數賦值時，沒有搞清楚參數之間的關係。第一個參數（傳入的指針）指向一長度為40字符
+
+的字符串，而在對第二個參數時，錯誤地將字符串長度設置為41。導致串口接收第41個字
+
+符時，程序越界操作，導致死機。下面是函數GetString的聲明：
+signed long GetString 
+( 
+    char * szString,         /* OUT: 字符串指針 */
+    WORD wSize            /* IN: 指定的字符串長度 */
+)
+1
+	當然有關函數參數的錯誤不止這些，例如未在模塊接口函數內部檢驗傳入參數的合法性、
+
+指針參數的有效性、參數未賦值就使用、參數類型不匹配或考慮不周導致上溢下溢等。這
+
+些都是編程者容易出錯的地方，亦是我們大家在走讀代碼時，需要特別注意的地方。
+
+【案例2.1.4】
+【正            文】
+	在交換機的V5協議測試中，有一個相當常用又相當簡單的測試項目，“交換機對某個V5接
+
+口發起主備倒換命令”。這在所有的V5測試中都會很順利地通過的項目，在以前這個項目
+
+也測試過許多次，也從來沒有遇到過異常情況。
+	可是在一次測試中卻遇到麻煩，在交換機側輸入了參數“模塊號”、“V5接口號”、“邏
+
+輯C通道ID”之後，發起主備鏈路倒換的命令，操作的結果居然是“無效的V5端口”。
+	這種提示令人感到很詫異，因為從AN側能夠正常發起主備鏈路倒換，從LE側也能正常發起
+
+該V5端口的指定鏈路倒換，而且系統也完全正常，可見數據配置並沒有錯誤。排除了人為
+
+的錯誤之後，我把重點放到了這三個輸入參數上：“模塊號”，“V5接口號”均是非常常
+
+規的數值，應該沒有問題；“邏輯C通道ID”數值比較大，但是仍然在協議規定的65535之
+
+內，應該為有效值。想到常規配置數據時“邏輯C通道ID”值一直配得比較小，或許問題就
+
+出在此。
+	於是把“邏輯C通道ID”值改小，再作同樣的操作，操作成功。到此很顯然是這個參數的
+
+有效值範圍定義有誤，再細細檢查，發現它只在單字節範圍內有效，必然是該參數定義的
+
+類型有誤。原因是：在函數OAM_Swap_Communication_Link（_UC v5_interface，_UC log
+
+ic_c_id）裡將邏輯C通道定義為字符型導致，改為_US型即解決。
+	推而廣之，在終端的功能測試中，對輸入參數值的測試，應該儘量覆蓋所有的有效值。在
+
+正常情況下，如果輸入值在為有效值，則應該得出正確的結果；如果輸入值為非法值，則
+
+系統應該給出錯誤提示，並且不予執行。 對於參數值有效性的判斷，特別應該注意一些特
+
+殊值和臨界值，比如在字節和雙字節處等等。
+
+【案例2.1.5】
+現象與分析：
+        在迴歸“載頻配置表及跳頻數據表中有零頻點或重複頻點時，MA編碼不正確”問
+
+題單時。發現當載頻配置表及跳頻數據表中有重複頻點或零頻點時，帶跳頻的呼叫不成功
+
+。
+         這時首先考慮系統消息發的是否正確，觀察系統消息一，發現所帶的CA表沒有錯
+
+誤，已經過濾掉了重複頻點和零頻點。
+         在考慮指配命令所帶的MA值是否正確，結果發現MA編碼也是正確的，也已經過濾
+
+掉重複頻點和零頻點。    
+         經過以上初步分析以後，開始懷疑給基站下配置時是否也正確過濾了無效頻點。
+
+然後查閱代碼，發現果然 BTSM在對基站初始化設置載頻屬性及設置信道屬性時，沒有對載
+
+頻配置表及跳頻數據表中頻點的有效性做檢查，以致於表中出現非法頻點時跳頻呼叫不成
+
+功。
+  
+  回顧與反思：
+          這個問題的發現並沒有用什麼特殊的分析方法，只不過是一般的“排除法”，
+
+而且這個問題也不是隱藏的非常之深，但是我覺得這個問題的發現暴露了我們在開發過程
+
+中的一個問題。那就是：如何實現各個模塊之間的有效溝通，避免因為某一模塊的修改而
+
+引起其他模塊的連鎖反映。
+        本來RR和BTSM都沒有考慮重複頻點和零頻點的情況，大家都寄託與數據配置的正
+
+確，卻也相安無事。RR首先增加了對非法頻點的過濾，本來是件好事，使我們的系統變的
+
+更加堅強，但是BTSM並不知道這一變化，於是在錯誤數據面前束手無策，反而起到了相反
+
+的效果。
+        公司常說“下一道工序是上一道工序的上帝”，是不是可以引申為“其他相關模
+
+塊是本模塊的上帝”。試想如果各個模塊多想想自己的改動是否給別人帶來不良影響，多
+
+及時瞭解一下其他模塊的最新進展。那麼此類問題將不再會發生。
+
+【案例2.1.6】
+【正            文】
+現象與分析：
+         在動態數據配置測試增加小區時，發現小區不能正常初始化。觀察ABIS_BTSM接
+
+口跟蹤窗口，沒有關於初始化流程的相關消息。經過分析發現是調用函數。
+   BTSM_make_send_site_config(_UC site_no , _UC ObjectClass , _US BTS_no ,_UC 
+
+TRX_no , _UC OperMode)
+{
+     ………
+    //判斷合法性
+    if ((site_no >= MAX_SITE_NUM)
+        || (BTS_no >= MAX_BTS_NUM)
+        || (TRX_no >= MAX_TRX_A_BTS))
+    {
+         ASSERT(FALSE);
+         return (FALSE);
+    }
+　　………
+}
+由於進行小區級的操作調用該函數時，TRX_NO以0xFF帶入，則在函數合法性檢查時就會返
+
+回。從而引發該錯誤。
+
+回顧與反思：
+    這是一個比較普通的錯誤，但是回顧它產生和解決的過程，覺得很有啟發，也引起了
+
+我對編程規範的一些思考。
+
+	可以說該錯誤的引起是與編程規範有關,本來函數 BTSM_make_send_site_config()沒有對
+
+ BTS_no和TRX_no 的合法性判斷，在代碼審查時，我們考慮到這不符合編程規範中的“檢
+
+查所有參數輸入的有效性”這一條，於是提出請開發人員增加對參數的有效性檢查。
+         但是我們和開發人員都忽略的一個問題，那就是，該函數被不同級別的對象調用
+
+，當進行小區級操作時，TRX_NO以0xFF帶入，則在函數合法性檢查時就會返回，引起上述
+
+錯誤。
+    讓我們再回頭看看這個函數，發現依然不符合編程規範，至少違反了“不要設計多用
+
+途面面俱到的函數”這一條。
+    查看我們的代碼，類似的問題還有不少，而且諸如：函數入口參數不加有效性檢查、
+
+函數返回值不加處理等問題也可以找到。這些問題就象一顆顆隱型炸彈，在稍微不注意時
+
+就會帶來嚴重後果。
+    正如前文所述，測試和開發人員都會因為“代碼熟悉程度”、“代碼編制時間太久有
+
+所遺忘”等諸如此類的原因而忽略一些問題。這時，良好的程序風格和編程規範就會成為
+
+一把強有力的保護傘。試想如果本文所提到的函數從設計到開發都嚴格按照規範來進行，
+
+那麼這個問題就沒有產生的土壤，如果我們的每一段代碼的編寫都嚴格遵守規範，那麼我
+
+們的系統將變的有多麼堅不可摧。
+
+2、注意多出口函數的處理
+【案例2.2.1】
+摘            要：如果函數存在多個出口，應注意函數對各個出口的處理。
+       問題描述：根據函數功能的需求，被測函數在函數體開始時保存了當前系統任務模
+
+式，並設置新的任務模式為不可搶佔模式，在函數返回時應該恢復任務的舊模式，否則會
+
+影響整個系統功能的實現。可是問題就出在這裡。由於函數有複雜的分支結構，有多個出
+
+口，有的出口對任務模式進行了恢復，有的出口沒有恢復，這樣就可能導致函數返回後系
+
+統任務模式被改變的問題。
+        問題分析：此問題出現的原因在於函數有多個出口，而程序員往往注重各個分支
+
+功能的實現的細節，而忽視了或者是忘記了在函數出口應做的收尾工作。這就象打一場戰
+
+爭一樣，戰爭勝利了，還要打掃戰場，開總結大會，否則就會象李自成一樣，仗打完了就
+
+開始享受了，最後前功盡棄。毛主席說得好：“宜將剩勇追窮寇，不可沽名學霸王”。所
+
+以，函數出口的處理應充分重視。
+        案例意義：這類問題很常見，對於有多個出口的函數，測試時應充分構造測試例
+
+，採用分支覆蓋的測試方法對函數各個出口的環境恢復、資源釋放情況進行觀察。對於編
+
+程人員來說，如果使函數有統一出口，可有效避免或減少類似問題。
+ 
+三、維護類代碼問題
+1、 統一枚舉類型的使用
+【案例3.1.1】
+【正            文】
+      在對基站告警屏蔽的測試中，偶爾使用一個告警ID測試，基站出乎意料地報錯：消
+
+息與物理位置不一致；通過跟蹤消息，發現主機消息中使用的單板類型值與基站的不一致
+
+；查看主機程序得知：對基站的單板類型（TRX）的定義中：告警臺和告警屏蔽使用0X23（
+
+BCID_CUI）,而據基站開發人員稱，他們使用的是0X09（BCID_TRX）。
+      該問題給我們的啟示是：測試中我們應儘可能地遍歷實際可能的情況；另外希望BT
+
+S和BSC的開發人員間的協作更加精密無懈可擊！
+
+2、 註釋量至少佔代碼總量的20％
+【案例3.2.1】對XXX產品BAM某版本部分代碼註釋量的統計
+					           註釋比例統計						  比例（按字節）		比例（按字）		比例（按行）
+
+			文件名
+==============================================================================
+
+=========
+0.000(    0/ 2160)		0.000(    0/  352)		0.000(    0/   48)		hlr\source\include
+
+\aa.h
+0.000(    0/ 1317)		0.000(    0/  137)		0.000(    0/   64)	newalarm\source\inc
+
+lude\alarmerr.h
+0.080(  228/ 2841)		0.115(   49/  426)		0.030(    7/  230)	newalarm\source\inc
+
+lude\alarmrec.h
+0.222(  220/  988)		0.213(   37/  173)		0.115(   11/   95)	newconfig\src\inclu
+
+de\alarmrec.h
+0.000(    0/  329)		0.000(    0/   27)		0.000(    0/   24)	newfhlr\source\incl
+
+ude\alarmrec.h
+0.151(  691/ 4563)		0.242(  128/  528)		0.114(   26/  228)	hlr\source\assemble
+
+r.c
+0.229(  631/ 2748)		0.361(  113/  313)		0.160(   22/  137)	newalarm\source\ass
+
+embler.c
+==============================================================================
+
+=========
+0.088(213896/2423601)	0.122(32953/268773)	0.082(10475/127119)	總計（整個項目）
+
+
+      8％				12％			8％
+
+ 
+四、產品兼容性問題
+1、系統配置、命令方式
+【案例4.1.1】
+事故現象：有時RPU A不能被其他網絡設備訪問，從其他主機或RPU板上PING RPU A，不通
+
+。RPU A自己PING自己，也不通。RPU板復位後，恢復正常。此問題偶然出現。
+
+問題分析步驟：
+
+首先分析造成RPU板網絡不通的原因通常有以下幾種：
+A) 物理連接的問題(如網口壞)；
+B) 以太網設置為自環工作方式；
+C) 以太網鏈路層協議有誤，Ethernet II、SNAP不一致；
+D) MAC地址非法(如為廣播地址或首位不是偶數等)；
+E) MAC或IP地址與其它網絡設備重複；
+F) IP協議設置為不轉發；
+G) 設置了防火牆；
+
+經過檢查，可以完全排除A、B、C、D、E、F這幾種原因，而以太網口也沒有設置任何防火
+
+牆規則，默認的包過濾設置為允許通過。但不能排除是防火牆的原因。
+
+為了驗證是否是防火牆造成的，打開RPU A的防火牆調試信息。果然，發現是防火牆有限制
+
+，採用了防火牆規則2，該規則限制訪問網絡設備。
+
+可是以太網口的防火牆沒有配置任何規則，從理論上來說，它應該只適用規則0，即默認規
+
+則。是什麼原因使以太網口採用了2號規則呢？
+
+進一步觀察調試信息，發現以太網口所分配的內部用戶號為49！這時我們想到防火牆所用
+
+的內部用戶號可能與DMU通道號有直接對應關係。經過試驗，果然發現對應普通撥號來說，
+
+防火牆內部用戶號就等於用戶所佔用的DMU通道號。
+
+這時，把RPU板上的所有DMU通道閉塞，只保留49號DMU通道，用戶撥號上網，讓它佔用第4
+
+9號通道，並使該用戶採用第3號防火牆規則。這是，以太網口同樣也該為收第3號防火牆規
+
+則限制。
+
+最後，我們從頭重複一次剛才的過程：
+1、復位RPU板後，用戶沒有撥號上網，RPU板以太網口所採用的防火牆的內部用戶號為49，
+
+採用第0號防火牆規則。
+2、第49號MODEM有用戶上網，且該用戶採用的防火牆規則為X(0<X<=50)，則以太網口防火
+
+牆規則也相應為X。
+
+至此，問題已經查明，防火牆對以太網口處理不當，不應該分配內部用戶號為49給以太網
+
+口，以致與第49號DMU通道形成不應有的關聯。這給系統運行帶來極大隱患。
+
+【案例4.1.2】
+	數據通信某產品，在進行終端並行測試的過程中發現一很奇怪的問題。先通過TELNET或N
+
+ETTERM登錄到主機系統上，然後在兩個TELNET終端同時以大包PING主機，PING XXX。XXX。
+
+XXX。XXX  ，包長為1000個Bytes，其中一個終端收到兩個應答後，不再有任何反應，另一
+
+個終端收到一個應答後，顯示超時，此後不再有任何反應。重新TELNET登錄，還可以登錄
+
+一個TELNET終端，但試圖再登錄第二個TELNET終端失敗（此係統共支持3個TELNET終端）。
+
+測試人員懷疑此前登錄的兩個TELNET任務已經死掉。於是通過超級終端登錄到串口，打開
+
+TRACE信息，TRACE信息顯示當前已有3個TELNET任務處於運行狀態，但實際上此時已只有一
+
+個TELNET終端可用，另兩個TELNET終端已經沒有反應了，而且確定再沒有其它人登錄到此
+
+交換機系統上，至此，確定是前述兩個TELNET任務已經死掉。但是，在與開發人員一起重
+
+現此問題時，奇怪的現象發生了，在有的機架上重複上述測試步驟，問題每次都能重現，
+
+而在有的機架上重複上述測試步驟，卻非常正常，沒有任何問題。開發人員仔細檢查程序
+
+也無法發現問題癥結所在。此問題持續多日無法解決。最後，經眾開發人員會診，懷疑是
+
+pSOS系統配置的問題，經比較兩個產生不同現象的機架上pSoS系統的系統配置文件，發現
+
+其中關於pNA+的Buffer配置部分，某些配置不同。將配置改為無問題的機架上的系統配置
+
+後，進行測試，問題消失。若恢復原配置則問題重現。因此，此問題最後確定為系統配置
+
+有誤。
+	由此案例，我們可得到一個經驗，那就是，當系統在不同機架上運行現象不同時，除考慮
+
+其它可能原因外，還應考慮是否操作系統配置不當。另外，此問題還帶出了一個附加的問
+
+題，那就是，我們的版本管理存在較大的問題，同為測試機架，但不同的機架上運行的程
+
+序版本卻不一樣。
+
+2、設備對接
+【案例4.2.1】
+【正            文】
+測試環境：
+      A8010 Refiner通過中繼線與Bell 1240交換機進行對接。                   
+
+現象描述：
+      從Bell 1240交換機引出PRI中繼線接入到Refiner的E1接入口上，接通後看Refiner
+
+ RPU板的中繼燈為滅狀態，但用電話進行測試，線路不通為忙音。
+
+原因分析：
+    問題的原因可能有兩點：
+   1、Bell 1240未送主叫與被叫號碼。
+   2、Bell 1240交換機PRI選路方式與Refiner接入服務器不同 。
+ 
+解決辦法：
+ (1) A8010 Refiner配置好數據後,RPU板正常運轉,中繼顯示正常，但用電話撥號後為忙音
+
+，後用Debug 進行調試發現Bell 1240交換機未將用戶被叫號碼送來，而且主叫號碼也不對
+
+，經與與交換機人員聯繫發現對方的傳送的主叫全部為映射的虛擬號碼，只有將接入服務
+
+器的主叫號碼改為此虛擬號碼才行，被叫配置後可正常傳送至接入服務器。.
+(2) 數據配置正常後，發現DMU可進行選路但一選就斷開，經調試發現Bell 1240交換機的
+
+PRI選路方式為Channel方式，Refiner接入服務器的默認選路方式為Ts-map方式，經更改配
+
+置後用戶可正常接入。
+
+啟示與分析
+       由於我們自己的測試環境一般都是我們的交換機，我們的接入服務器，因此我們的
+
+交換機與接入設備上運行，數據都是配置好的，環境是穩定的，到了與不是我們的設備進
+
+行對接時才發現並不一定別人的設備都與我們完全兼容，有許多東西都是在問題發生後才
+
+認識到的(如PRI的選路方式)，以後在測試中一定要深入細緻的測到每一個細小的問題，並
+
+且要近可能的與其它廠家的設備進行對接測試，只有這樣才能保證我們產品在賣到局方後
+
+的正常穩定運行。
+
+3、其他
+【案例4.3.1】
+【正     文】
+	負荷分擔的基本思想是通過每個鏈路中的帶寬來均勻分佈流量，目前還沒有考慮PMP，2M
+
+ UNI，34UNI，沒有考慮優先級和百分比，況且對於同一局向的路由表的地址長度一定要相
+
+等，目前對於BEST EFFORT呼叫僅分配150K的帶寬（UBR業務），此參數可在static void 
+
+GetBandwidth( STraffic *sTempTraffic, DWORD *pdwBandwidth )函數細調，為了達到統
+
+計均勻，此參數要合適。如有二條負荷分擔路由A、B，A中已建了10M的PVC，如果上述參數
+
+太少，則所有BEST EFFORT呼叫都在B上，而不會到A上，如果選取150K，則在B上有70個呼
+
+叫（BEST EFFORT）後，就在A、B上同時都分擔呼叫。
+	根據上述負荷分擔的基本思想進行了負荷分擔 的功能測試。測試中的線路連接圖如下圖
+
+所示。
+
+
+
+
+
+
+ 
+
+	HP測試儀設置Forword/Backword   Peak Cell Rate為1000cells/s，測試儀的3口向7口發
+
+起呼叫（信令類型為UNI3.1）。在沒有發起呼叫前，將交換機 1、2的5、7和8口的ILMI和
+
+信令均激活，這三個口不建立與其它光口的鏈路，此時這三個口的已用帶寬（Used Band-
+
+In/Out）為2000cellsps （sh port 可以看到已用帶寬為信令鏈路所佔）。現在由測試儀
+
+3口發起一次呼叫，sh port 5、7可以看到已用帶寬由2000變為3000，同時建立起一條5口
+
+和7口間的SVC。再發起第二次呼叫，sh port 8可以看到已用帶寬由2000變為3000，而 5口
+
+的已用帶寬由3000變為4000，同時增加了一條5口和8口間的SVC。如此不斷地發起呼叫，可
+
+以看到7口和8口的已用帶寬是交替在增長的，這樣就證明了負荷分擔功能的實現。
+Radium.MPU%sh po 7
+Port status                 : Active
+Band width               : STM_1
+O/E attribute             : Optical
+Clock attribute          : Source timing
+Type                          : UNI
+Loopback mode        : No loop
+Alarm status              : NODEFECT
+Max Band-In             : 353207
+Max Band-Out          : 353207
+Used Band-In            : 2000
+Used Band-Out         : 2000
+Max VPCs                 : 100
+Max VCCs                 : 1900
+Used PVPs                 : 0
+Used PVCs                 : 2
+Used SVCs                 : 331
+Test mode                   : off
+	在測試的過程中出現瞭如下的現象：交換機1的7口和交換機2的7、8口的ILMI註冊成功，
+
+三個口都獲得了對端的網絡前綴，只有交換機1的8口的ILMI狀態為VERIFYING，卻沒有獲得
+
+對端的網絡前綴，從LOG信息看，該口的ILMI註冊過程正確。經查該口的ILMI協議版本為3
+
+.1，信令版本為UNI3.1，而其它三個口的ILMI協議版本為4.0， 信令版本為IISP，發起的
+
+所有呼叫都從交換機1的7口中繼到交換機2，8口沒有進行分擔。將交換機1的8口的ILMI協
+
+議版本設置為4.0，8口即可進行負荷分擔。這說明ILMI協議版本沒有實現自適應的功能。
+
+後與開發人員溝通後得知，我們交換機的ILMI4.0版本可以自適應其它廠家的ILMI3.1版本
+
+，但不自適應我們自己交換機的ILMI3.1版本，對端網絡前綴的獲得也僅限於ILMI4.0 ，並
+
+且是非協議規定的，是由我們自己設計的，設計中沒有考慮ILMI3.1 對獲得對端網絡前綴
+
+的支持。在實際開局中，ILMI是不激活的，信令版本是由手工設置為IISP的，以實現與其
+
+它廠家的產品的互通。
+	測試結果說明負荷分擔功能已經正確地實現了，但條件是ILMI的版本必須為4.0。
+
+
+ 
+五、版本控制問題
+1、新老代碼中同一全局變量不一致
+【案例5.1.1】
+【正            文】     
+        開始時，RPU板的網口地址為202.2.68.56，通過以太網口對RPU板上的軟件和數據
+
+進行加載，RPU板運行正常，程序和數據全部正確；改變RPU板的地址（10.2.68.56），進
+
+行用戶呼叫接入測試，發現用戶正確輸入的用戶名和口令不能驗證通過，在RPU板的telne
+
+t窗口中打開RADIUS調試開關，顯示認證請求報文和計費報文發往正確的RADIUS服務器，但
+
+是一直沒有收到應答，局方維護人員查看RADIUS服務器，也找不到任何記錄，驗證和計費
+
+始終不能成功。
+        接下來通過以下幾個途徑嘗試定位問題：
+        1、在另一塊RPU板上加載老版本的程序（注意這塊RPU板的地址已經是10.2.68.5
+
+7），重新測試，認證和計費正常進行，沒有出現以上問題，可以排除對方RADIUS服務器存
+
+在問題的可能。
+        2、可能出現問題的地方是RADIUS報文的發送和接受，考慮到RADIUS報文是以UDP
+
+包的方式傳送，所以在RPU的telnet中打開UDP報文的調試開關，跟蹤RADIUS報文，發現RA
+
+DIUS報文已經發送，但是在其填充的源地址（Source IP Address）字段的值是202.2.68.
+
+56，由此可以定位問題，是RADIUS模塊在填充發送的RADIUS報文的源地址時仍然用RPU板改
+
+變地址前的老地址，導致RADIUS服務器發送的應答報文不能正確返回。
+        問題已經定位，時間緊迫，不可能立即修改程序，所以只能採取重新復位所有的
+
+RPU板的方法來暫時迴避問題再次發生。
+
+啟  示：
+        1、軟件全局變量的更改，要考慮到每一個模塊受其影響的可能；
+        2、測試人員在測試中要儘可能地多考慮到各種情況下的邊緣取值。
+
+
+ 
+六、可測試性代碼問題
+1、調試信息/打印信息的正確性
+【案例6.1.1】
+【正            文】為製作軟件呼叫器，對SPT板的放音程序進行了修改，但是調試中發
+
+現進行呼叫後一段時間交換機自動重啟。於是在修改的代碼開始處增加了打印消息，跟蹤
+
+程序流程。程序結構如下：
+ 
+
+
+再次跟蹤打印信息，發現消息打印消息1開始後就會發生重啟現象，多次重試，發現消息1
+
+的結束跟蹤打印有時有有時無，而消息2的打印一直沒有跟蹤到。初步判斷程序錯誤發生在
+
+對消息1的處理於是集中力量檢查對消息1的處理，但經過長時間的檢查，並未在此處理流
+
+程中發現錯誤。於是在消息1的開始處直接RETURN，屏蔽掉消息1的處理。再次測試，發現
+
+重啟現象依舊，偶爾能夠看到函數入口處的打印消息。
+為什麼會出現這樣的情況呢？什麼情況導致重啟呢？
+從修改的情況看，可能的地方只有此兩條消息處，會不會是第二條消息的處理造成的？雖
+
+然從現象看不太可能。報著試一試的想法在消息2的入口處也加了一RETURN，居然重啟現象
+
+不重現了。
+立即檢查消息2的處理，很快發現在處理的開始由於指針使用錯誤導致程序死機重啟。
+錯誤是簡單的，但是根據現象卻使人得到錯誤判斷。為什麼消息2導致死機但其前的打印消
+
+息為什麼後臺看不見呢？
+考慮一下交換機的消息打印機制，我們會發現，在程序中的打印消息並不是馬上在後臺上
+
+顯示，消息從主機傳到後臺需要一定的時間。如果用Printf打印消息不久後，程序就發生
+
+嚴重錯誤而導致程序死機，而打印消息還沒有來得及發送到後臺，當然就不會出現我們想
+
+“應該有的”打印消息。
+【總結】
+1、由於環境的特殊性，我們常常認為“應該”的事件並沒有發生，導致我們對問題迷惑不
+
+解；
+2、“表面現象往往是騙人的”，要找到問題的實質可能需要繞過明顯擺在我們面前的“表
+
+面現象”，從另一個角度考慮一下；
+
+
+ 案例與練習第二部分
+ 
+練習
+	用戶login模塊的編制：首先password.txt記錄了註冊用戶的id和口令，password.txt文
+
+件每一行格式為：Id%%%%Password
+其中：
+Id:                (字母+數字)  最多16 字符
+Password:    (字母+數字)  最多16字符
+要求用戶輸入id/口令時，程序通過查找password.txt，檢查用戶是否存在，是否合法，直
+
+接輸出相應結果；當用戶直接回車時，程序退出。要求考慮一般的異常。
+規則：
+1.	小組來完成；
+2.	首先花30--40分鐘畫流程圖；
+3.	然後30－40分鐘編碼，用C語言，人人都編；
+4.	30-45分鐘小組內部討論，選擇最有代表性的，認為比較好的，先自行評點；
+5.	45分鐘--1小時，集體評審；
+	 1〕不符合規範的是部分------〉集體自醒；
+	 2〕符合規範的----------------〉加強鞏固；
+6.	要求嚴格按軟件編程規範來進行編碼、評審；
+7.	保留代碼，下一節要用。
+	
+
+
+
+--
+※ 來源:·日月光華 bbs.fudan.edu.cn·HTTP [FROM: 10.11.12.192]
+--
+※ 轉載:·日月光華 bbs.fudan.edu.cn·[FROM: 10.100.131.108]
+
+ 
+
+--------------------------------------------------------------------------------
+[返回上一頁] [本討論區]

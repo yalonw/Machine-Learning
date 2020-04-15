@@ -1,0 +1,117 @@
+日月光華 -- MS_Windows精華區文章閱讀
+--------------------------------------------------------------------------------
+ 發信人: wei (永遠的旁觀者), 信區: MS_Windows
+標  題: Windows 2000 beta版使用手記 (轉載）
+發信站: 日月光華站 (Fri Jun  4 22:09:57 1999) , 轉信
+
+Win2000共有四個版本:   
+Windows 2000 Professional就是以前的NT Workstation, 用做替代Win98的.   
+Windows 2000 Server就是以前的NT Server, 支持2個CPU,Active Directory   
+Windows 2000 Advanced Server就是以前的NT Enterprise, 支持4個CPU,集群   
+ 
+Windows 2000 Datacenter Server,新出的, 支持16個CPU 64GB RAM, 用於數據   
+倉庫,商務分析,科學工程模擬,在線交易.   
+ 
+現在市面上由很多個beta版:   
+beta1有NT5 Workstation,NT5 Server with Active Directory.(都用過)   
+beta2有NT5 Workstation,NT5 Enterprise(只用過這個)   
+beta3有Windows 2000 Professional,Windows 2000 Advanced Server(正在用)   
+ 
+ 
+注意:因為微軟改了幾次名字,所以不同beta版不同叫法.買的時候要注意.   
+ 
+beta版使用手記:   
+早就想寫了, 但剛放假, 我想先玩一下新遊戲, 就拖了一個星期. 但玩來玩去還   
+是quake2好玩.   
+總的來說beta1就像加了ie4的nt4. beta2就開始好了, 界面比win98還漂亮, 開   
+始支持多語言了, 用mmc做控制界面. beta1和beta2就寫這麼多了.    
+ 
+beta3:首先安裝像nt4差不多, 但沒有了/b/ox等關於製作磁盤的參數. 到圖形界   
+面安裝就更加簡單, 好象只要輸個名字, 密碼就沒了. 不過正式版可能會有更多   
+的選項. 裝了多長時間我不知道,我是一邊看電視一邊裝的. 我的Windows 2000    
+Professional有540m左右.   
+ 
+裝完之後重起, OS Loader換成5.0的(廢話). 接著就不是藍屏了, 取代的是像w   
+in98開機圖片的, 直接給一張什麼Windows 2000 Professional的圖片, 接著內核   
+裝載完, 再換一次圖(像nt4的藍屏之後的第一張圖片), 現在開始啟動windows的   
+服務, 網絡什麼的.    
+ 
+第一次進入win2000,start menu上有一個圈, 介紹start menu.像office97助手   
+說話的那種. 點一下,  菜單是漸漸出現的, 非常漂亮, 鼠標上還有陰影的, 我懷   
+疑微軟不用GDI而是用D3D顯示windows了, 如果是就太好了, 3D加速卡就不是隻能   
+用來打遊戲.   
+ 
+再看一看桌面,圖標擺放順序不一樣了, My Document放第一位,充分體現了以文   
+檔為中心的操作系統的思想, My Document裡擺放fax,my pictures. 這兩個都是   
+特殊的folder, fax沒用過, 而my pictuers是新的Image Perviews HTML templa   
+te(就是ie4的Web view的一種), 在這可以直接放大, 縮小, 全屏, 打印圖片. 第   
+二個是My Computer, 多了一個Web Folders, 這ie5都有, 而Dial-up Networkin   
+g被分出去, 還改了名字Network and Dial-up connections, 是在左邊的最後一   
+個Link. 不仔細看是看不出的, 可能微軟想淡化撥號這一概念, 所有的聯接都是   
+自動(自動撥號), 使人以為一直在網絡裡. 現在toolbars都可以定製了, 可以定   
+制有效,  個性化的toolbars, 我覺得Selective text on right最有用, 因為有   
+些圖標加文字是應該的, 常用的又可以省去文字, 減少的地方佔用. Web view也   
+應該說一下, nt5的web view跟ie4的不一樣,它使用了html, css, javaScript,    
+和非常多的控件實現(內部的), 比起ie4的就更加複雜, 有更多功能. 就是左邊的   
+地方, 多了很多Links和按鈕, 而且佈局挺漂亮, 我就不想再用以前那光禿禿的什   
+麼也沒有的界面. 說道界面, 我就說一下新的Search程序(就是File fine), 現在   
+它做在exploer裡面的, 再加上dhtml等技術做成一個新的外觀. 雖然沒有什麼特   
+別,但用這種方法來實現一個程序, 讓我想起如果unix也用這種方法來改進它的程   
+序界面就好了. 為什麼呢, 因為寫uinx程序的人,都不太注重界面,(寫與界面交互   
+的程序還是比較煩的, 就算有了可視化的..), 但用html寫界面比較簡單, 加上s   
+cript或其他的就可以與程序(控件)組成一個GUI的, 這隻需在xwin上加一個好的   
+browser(ie4??), 而且編程的和寫界面的可以分開, 效率挺高的. 這樣unix就不   
+會說難用, 有機會跟windows競爭.(99年第一期個人電腦上就介紹了一個程序, 就   
+是用ie4加dhtml等, 做成一個圖形軟件, 像photo shop那種)   
+所以到現在, 你不會覺得ie集成在windows是多餘的了吧. 第三個是My Network    
+Places 以前的Network Neighbour的改進, 改進的地方太多了, 總的來說就是讓   
+新手更加容易使用, 而提供給熟練的人更多選項. 注意, 網上就算沒有dhcp, 而   
+你又把網卡設成自動獲得ip, 它會給自己一個169.*.*.*的ip(這跟win98的某一個   
+功能相似).  dns設置中有兩項 Register this connection's address/domain    
+name in DNS 實用來支持新的DDNS, 像WINS一樣的. 這個十分有用. 由於微軟設   
+計用Active Directory來取代Netbios over TCP/IP, 所以WINS快沒用了.(其實沒   
+有NBT這個包袱, NT早就用上目錄服務了). IP security, TCP/IP filtering就是   
+新加的. 你還可以把網絡狀態放進notify bar, 像撥號網絡一樣, 可以看流量,速   
+度等, 很好玩.   
+ 
+現在說一下一些零碎的東西. Users and Passwords 是統一管理用戶, 認證, 登   
+陸, 密碼的地方. Network and Dial-up Connections, Administrative tools,   
+ Scheduled Tasks, 都移到Control Panel裡. Administrative tools裡的管理程   
+序都使用mmc做框架, 據說有利於遠程管理. Add/Remove Hareware Wizard比win   
+98的還好用, 速度更快(不過高手都用Device Manager), 不過可惜沒有我的vood   
+oo2, pci64 sound card, zoltrix winhsp modem驅動程序, 聲音就沒了, 打遊戲   
+只能用i740, 不過它的驅動程序也是有問題, 在quake2裡用不了default opengl   
+. 不過用舊的卡就不怕, 我用s3 virge/ess1868是正常的. Add/Remove Program   
+s可以直接看到你安裝的程序的大小, 自帶的組件只有幾個, 可能是beta版的緣故   
+. Regional Options就是該多語言的地方, 把General-> Your locale (loction   
+)改成Chinese(PRC), Language Setting for the system加入你想要看的語言,    
+什麼簡繁體, 日文, 韓文...都可以. 還可同屏顯示. 在Input locales加入輸入   
+法, 我只裝了微軟拼音輸入法2.0, 還可以手寫輸入, 支持鼠標. 還可以用別的手   
+寫輸入板插件(入慧筆之類的). Sounds and Munltimedia有一個speech項, 就是   
+語音識別, 它自帶了一個文本到語音的引擎, 沒有輸入引擎(好像有, 但沒顯示)   
+, 不過你可以下這個http://activex.microsoft.com/activex/controls/agent2  
+/actcnc.exe, msagent已經安裝, 又一個角色merlin. 你可以到http://www.arg  
+olink.com/agent/ 找一些它的應用程序, 下一代的界面都會有它(www.microsof   
+t.com/msagent), 我在agent的新聞組聽說過新版的via voice會支持這個接口,    
+很快就會有中文輸入了(大家試以下via voice 98, 看行不行, 我還沒找到, 聽說   
+還支持廣州話). 寫到這裡大家可以看到手寫輸入, 語音輸入都會變成標準輸入.   
+ 就像鍵盤, 鼠標一樣.(微軟在這方面還是挺有推動力的)   
+ 
+因為還是beta版, 我就不寫其他複雜的功能了, 你自己慢慢試吧. 總的來說, w   
+in2000是一個非常好的升級, nt4 與 win2000的變化, 比win95和win98還要大.    
+速度嗎, 還可以, 好像比win98慢10%-30%(不同情況下表現不同), pII450是夠的   
+, 64m還可以, 不過還是128m最好, 因為Mem usage一般在80m左右. 內存夠了, 就   
+不用升硬盤. 正式版出後, 速度還會更快.(完)   
+ 
+mail to eric_xue@263.net   
+--
+我沒有什麼高見，
+  我也不想發表什麼意見，
+    我只想是個永遠的旁觀者。
+
+※ 來源:·日月光華站 bbs.fudan.edu.cn·[FROM: 10.13.244.202]
+
+ 
+
+--------------------------------------------------------------------------------
+[返回上一頁] [本討論區]

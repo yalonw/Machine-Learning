@@ -1,0 +1,2174 @@
+日月光華 -- SE精華區文章閱讀
+--------------------------------------------------------------------------------
+ 發信人: jiachong (甲蟲), 信區: SE
+標  題: [轉載]編程規範和範例
+發信站: 日月光華 (2003年04月20日22:39:43 星期天), 站內信件
+
+【 以下文字轉載自 FDU_C.S. 討論區 】
+【 原文由 violinist 所發表 】
+編程規範和範例
+
+
+目  錄
+1 排版  6
+2 註釋  11
+3 標識符命名    18
+4 可讀性    20
+5 變量、結構    22
+6 函數、過程    28
+7 可測性    36
+8 程序效率  40
+9 質量保證  44
+10 代碼編輯、編譯、審查 50
+11 代碼測試、維護   52
+12 宏   53
+ 
+1 排版
+&sup1;  1-1：程序塊要採用縮進風格編寫，縮進的空格數為4個。
+說明：對於由開發工具自動生成的代碼可以有不一致。
+&sup1;  1-2：相對獨立的程序塊之間、變量說明之後必須加空行。
+示例：如下例子不符合規範。
+if (!valid_ni(ni))
+{
+    ... // program code
+}
+repssn_ind = ssn_data[index].repssn_index;
+repssn_ni  = ssn_data[index].ni;
+
+應如下書寫
+if (!valid_ni(ni))
+{
+    ... // program code
+}
+
+repssn_ind = ssn_data[index].repssn_index;
+repssn_ni  = ssn_data[index].ni;
+&sup1;  1-3：較長的語句（>80字符）要分成多行書寫，長表達式要在低優先級操作符處劃
+
+
+分新行，操作符放在新行之首，劃分出的新行要進行適當的縮進，使排版整齊，語句可讀
+
+
+。
+示例：
+perm_count_msg.head.len = NO7_TO_STAT_PERM_COUNT_LEN
+                          + STAT_SIZE_PER_FRAM * sizeof( _UL );
+
+act_task_table[frame_id * STAT_TASK_CHECK_NUMBER + index].occupied
+              = stat_poi[index].occupied;
+
+act_task_table[taskno].duration_true_or_false
+              = SYS_get_sccp_statistic_state( stat_item );
+
+report_or_not_flag = ((taskno < MAX_ACT_TASK_NUMBER)
+                      && (n7stat_stat_item_valid (stat_item))
+                      && (act_task_table[taskno].result_data != 0));
+ 
+&sup1;  1-4：循環、判斷等語句中若有較長的表達式或語句，則要進行適應的劃分，長表
+
+
+達式要在低優先級操作符處劃分新行，操作符放在新行之首。
+示例：
+if ((taskno < max_act_task_number)
+    && (n7stat_stat_item_valid (stat_item)))
+{
+    ... // program code
+}
+
+for (i = 0, j = 0; (i < BufferKeyword[word_index].word_length)
+                    && (j < NewKeyword.word_length); i++, j++)
+{
+    ... // program code
+}
+
+for (i = 0, j = 0;  
+     (i < first_word_length) && (j < second_word_length);  
+     i++, j++)
+{
+    ... // program code 
+}
+&sup1;  1-5：若函數或過程中的參數較長，則要進行適當的劃分。
+示例：
+n7stat_str_compare((BYTE *) & stat_object,
+                   (BYTE *) & (act_task_table[taskno].stat_object),
+                   sizeof (_STAT_OBJECT));
+
+n7stat_flash_act_duration( stat_item, frame_id *STAT_TASK_CHECK_NUMBER
+                                      + index, stat_object );
+&sup1;  1-6：不允許把多個短語句寫在一行中，即一行只寫一條語句。
+示例：如下例子不符合規範。
+rect.length = 0;  rect.width = 0;
+
+應如下書寫
+rect.length = 0;
+rect.width  = 0;
+&sup1;  1-7：if、for、do、while、case、switch、default等語句自佔一行，且if、for
+
+
+、do、while等語句的執行語句部分無論多少都要加括號{}。 
+示例：如下例子不符合規範。
+if (pUserCR == NULL) return;
+
+應如下書寫：
+if (pUserCR == NULL)
+{
+    return;
+}
+&sup1;  1-8：對齊只使用空格鍵，不使用TAB鍵。
+說明：以免用不同的編輯器閱讀程序時，因TAB鍵所設置的空格數目不同而造成程序佈局不
+
+
+整齊，不要使用BC作為編輯器合版本，因為BC會自動將8個空格變為一個TAB鍵，因此使用
+
+
+BC合入的版本大多會將縮進變亂。
+&sup1;  1-9：函數或過程的開始、結構的定義及循環、判斷等語句中的代碼都要採用縮進
+
+
+風格，case語句下的情況處理語句也要遵從語句縮進要求。
+&sup1;  1-10：程序塊的分界符（如C/C++語言的大括號‘{’和‘}’）應各獨佔一行並且
+
+
+位於同一列，同時與引用它們的語句左對齊。在函數體的開始、類的定義、結構的定義、
+
+
+枚舉的定義以及if、for、do、while、switch、case語句中的程序都要採用如上的縮進方
+
+
+式。
+示例：如下例子不符合規範。
+for (...) {
+    ... // program code
+}
+
+if (...) 
+    {
+    ... // program code
+    }
+
+void example_fun( void )
+    {
+    ... // program code
+    }
+
+應如下書寫。
+for (...) 
+{
+    ... // program code
+}
+
+if (...) 
+{
+    ... // program code
+}
+
+void example_fun( void )
+{
+    ... // program code
+}
+&sup1;  1-11：在兩個以上的關鍵字、變量、常量進行對等操作時，它們之間的操作符之前
+
+
+、之後或者前後要加空格；進行非對等操作時，如果是關係密切的立即操作符（如－>），
+
+
+後不應加空格。
+說明：採用這種鬆散方式編寫代碼的目的是使代碼更加清晰。
+由於留空格所產生的清晰性是相對的，所以，在已經非常清晰的語句中沒有必要再留空格
+
+
+，如果語句已足夠清晰則括號內側(即左括號後面和右括號前面)不需要加空格，多重括號
+
+
+間不必加空格，因為在C/C++語言中括號已經是最清晰的標誌了。
+在長語句中，如果需要加的空格非常多，那麼應該保持整體清晰，而在局部不加空格。給
+
+
+操作符留空格時不要連續留兩個以上空格。
+
+示例：
+(1) 逗號、分號只在後面加空格。
+int a, b, c; 
+
+(2)比較操作符, 賦值操作符"="、 "+="，算術操作符"+"、"%"，邏輯操作符"&&"、"&"，
+
+
+位域操作符"<<"、"^"等雙目操作符的前後加空格。
+if (current_time >= MAX_TIME_VALUE) 
+a = b + c;
+a *= 2;
+a = b ^ 2;
+
+(3)"!"、"~"、"++"、"--"、"&"（地址運算符）等單目操作符前後不加空格。
+*p = 'a';        // 內容操作"*"與內容之間
+flag = !isEmpty; // 非操作"!"與內容之間
+p = &mem;        // 地址操作"&" 與內容之間
+i++;             // "++","--"與內容之間
+
+(4)"->"、"."前後不加空格。
+p->id = pid;     // "->"指針前後不加空格
+
+(5) if、for、while、switch等與後面的括號間應加空格，使if等關鍵字更為突出、明顯
+
+
+。
+if (a >= b && c > d)
+&frac12;    1-1：一行程序以小於80字符為宜，不要寫得過長。
+     
+2 註釋
+&sup1;  2-1：一般情況下，源程序有效註釋量必須在20％以上。
+說明：註釋的原則是有助於對程序的閱讀理解，在該加的地方都加了，註釋不宜太多也不
+
+
+能太少，註釋語言必須準確、易懂、簡潔。
+&sup1;  2-2：說明性文件（如頭文件.h文件、.inc文件、.def文件、編譯說明文件.cfg等
+
+
+）頭部應進行註釋，註釋必須列出：版權說明、版本號、生成日期、作者、內容、功能、
+
+
+與其它文件的關係、修改日誌等，頭文件的註釋中還應有函數功能簡要說明。
+示例：下面這段頭文件的頭註釋比較標準，當然，並不侷限於此格式，但上述信息建議要
+
+
+包含在內。
+/*************************************************
+  Copyright (C), 1988-1999, Huawei Tech. Co., Ltd.
+  File name:      // 文件名
+  Author:       Version:        Date: // 作者、版本及完成日期
+  Description:    // 用於詳細說明此程序文件完成的主要功能，與其他模塊
+                  // 或函數的接口，輸出值、取值範圍、含義及參數間的控
+                  // 制、順序、獨立或依賴等關係
+  Others:         // 其它內容的說明
+  Function List:  // 主要函數列表，每條記錄應包括函數名及功能簡要說明
+    1. ....
+  History:        // 修改歷史記錄列表，每條修改記錄應包括修改日期、修改
+                  // 者及修改內容簡述  
+    1. Date:
+       Author:
+       Modification:
+    2. ...
+*************************************************/
+&sup1;  2-3：源文件頭部應進行註釋，列出：版權說明、版本號、生成日期、作者、模塊
+
+
+目的/功能、主要函數及其功能、修改日誌等。
+示例：下面這段源文件的頭註釋比較標準，當然，並不侷限於此格式，但上述信息建議要
+
+
+包含在內。
+/************************************************************
+  Copyright (C), 1988-1999, Huawei Tech. Co., Ltd.
+  FileName: test.cpp
+  Author:        Version :          Date:
+  Description:     // 模塊描述      
+  Version:         // 版本信息
+  Function List:   // 主要函數及其功能
+    1. -------
+  History:         // 歷史修改記錄
+      <author>  <time>   <version >   <desc>
+      David    96/10/12     1.0     build this moudle  
+***********************************************************/
+說明：Description一項描述本文件的內容、功能、內部各部分之間的關係及本文件與其它
+
+
+文件關係等。History是修改歷史記錄列表，每條修改記錄應包括修改日期、修改者及修改
+
+
+內容簡述。
+&sup1;  2-4：函數頭部應進行註釋，列出：函數的目的/功能、輸入參數、輸出參數、返回
+
+
+值、調用關係（函數、表）等。
+示例：下面這段函數的註釋比較標準，當然，並不侷限於此格式，但上述信息建議要包含
+
+
+在內。
+/*************************************************
+  Function:       // 函數名稱
+  Description:    // 函數功能、性能等的描述
+  Calls:          // 被本函數調用的函數清單
+  Called By:      // 調用本函數的函數清單
+  Table Accessed: // 被訪問的表（此項僅對於牽扯到數據庫操作的程序）
+  Table Updated:  // 被修改的表（此項僅對於牽扯到數據庫操作的程序）
+  Input:          // 輸入參數說明，包括每個參數的作
+                  // 用、取值說明及參數間關係。
+  Output:         // 對輸出參數的說明。
+  Return:         // 函數返回值的說明
+  Others:         // 其它說明
+*************************************************/
+&sup1;  2-5：邊寫代碼邊註釋，修改代碼同時修改相應的註釋，以保證註釋與代碼的一致
+
+
+性。不再有用的註釋要刪除。
+&sup1;  2-6：註釋的內容要清楚、明瞭，含義準確，防止註釋二義性。
+說明：錯誤的註釋不但無益反而有害。
+規則2-7：避免在註釋中使用縮寫，特別是非常用縮寫。
+說明：在使用縮寫時或之前，應對縮寫進行必要的說明。
+&sup1;  2-8：註釋應與其描述的代碼相近，對代碼的註釋應放在其上方或右方（對單條語
+
+
+句的註釋）相鄰位置，不可放在下面，如放於上方則需與其上面的代碼用空行隔開。
+示例：如下例子不符合規範。
+例1：
+/* get replicate sub system index and net indicator */
+
+
+repssn_ind = ssn_data[index].repssn_index;
+repssn_ni = ssn_data[index].ni;
+
+例2：
+repssn_ind = ssn_data[index].repssn_index;
+repssn_ni = ssn_data[index].ni;
+/* get replicate sub system index and net indicator */
+
+應如下書寫
+/* get replicate sub system index and net indicator */
+repssn_ind = ssn_data[index].repssn_index;
+repssn_ni = ssn_data[index].ni;
+&sup1;  2-9：對於所有有物理含義的變量、常量，如果其命名不是充分自注釋的，在聲明
+
+
+時都必須加以註釋，說明其物理含義。變量、常量、宏的註釋應放在其上方相鄰位置或右
+
+
+方。
+示例：
+/* active statistic task number */
+#define MAX_ACT_TASK_NUMBER 1000
+
+#define MAX_ACT_TASK_NUMBER 1000 /* active statistic task number */
+&sup1;  2-10：數據結構聲明(包括數組、結構、類、枚舉等)，如果其命名不是充分自注釋
+
+
+的，必須加以註釋。對數據結構的註釋應放在其上方相鄰位置，不可放在下面；對結構中
+
+
+的每個域的註釋放在此域的右方。
+示例：可按如下形式說明枚舉/數據/聯合結構。
+/* sccp interface with sccp user primitive message name */
+enum  SCCP_USER_PRIMITIVE
+{
+    N_UNITDATA_IND, /* sccp notify sccp user unit data come */
+    N_NOTICE_IND,   /* sccp notify user the No.7 network can not */
+                    /* transmission this message */
+    N_UNITDATA_REQ, /* sccp user's unit data transmission request*/
+};
+&sup1;  2-11：全局變量要有較詳細的註釋，包括對其功能、取值範圍、哪些函數或過程存
+
+
+取它以及存取時注意事項等的說明。
+示例：
+/* The ErrorCode when SCCP translate */
+/* Global Title failure, as follows */      // 變量作用、含義
+/* 0 － SUCCESS   1 － GT Table error */
+/* 2 － GT error  Others － no use  */       // 變量取值範圍
+/* only  function  SCCPTranslate() in */
+/* this modual can modify it,  and  other */
+/* module can visit it through call */
+/* the  function GetGTTransErrorCode() */    // 使用方法
+BYTE g_GTTranErrorCode;  
+&sup1;  2-12：註釋與所描述內容進行同樣的縮排。
+說明：可使程序排版整齊，並方便註釋的閱讀與理解。
+示例：如下例子，排版不整齊，閱讀稍感不方便。
+void example_fun( void )
+{
+/* code one comments */
+    CodeBlock One
+
+        /* code two comments */
+    CodeBlock Two
+}
+
+應改為如下佈局。
+void example_fun( void )
+{
+    /* code one comments */
+    CodeBlock One
+
+    /* code two comments */
+    CodeBlock Two
+}
+&sup1;  2-13：將註釋與其上面的代碼用空行隔開。
+示例：如下例子，顯得代碼過於緊湊。
+/* code one comments */
+program code one
+/* code two comments */
+program code two
+
+應如下書寫
+/* code one comments */
+program code one
+
+/* code two comments */
+program code two
+&sup1;  2-14：對變量的定義和分支語句（條件分支、循環語句等）必須編寫註釋。
+說明：這些語句往往是程序實現某一特定功能的關鍵，對於維護人員來說，良好的註釋幫
+
+
+助更好的理解程序，有時甚至優於看設計文檔。
+&sup1;  2-15：對於switch語句下的case語句，如果因為特殊情況需要處理完一個case後進
+
+
+入下一個case處理，必須在該case語句處理完、下一個case語句前加上明確的註釋。
+說明：這樣比較清楚程序編寫者的意圖，有效防止無故遺漏break語句。
+示例（注意斜體加粗部分）：
+case CMD_UP:   
+    ProcessUp(); 
+    break;
+
+case CMD_DOWN: 
+    ProcessDown(); 
+    break;
+
+case CMD_FWD:  
+    ProcessFwd(); 
+    
+if (...)
+{
+    ...
+    break;
+}
+else
+{
+    ProcessCFW_B();   // now jump into case CMD_A
+}
+
+case CMD_A:    
+    ProcessA();    
+    break;
+
+case CMD_B:    
+    ProcessB();    
+    break;
+
+case CMD_C:    
+    ProcessC();    
+      break;
+
+case CMD_D:    
+    ProcessD();    
+    break;
+...
+&frac12;    2-1：避免在一行代碼或表達式的中間插入註釋。
+說明：除非必要，不應在代碼或表達中間插入註釋，否則容易使代碼可理解性變差。
+&frac12;    2-2：通過對函數或過程、變量、結構等正確的命名以及合理地組織代碼的結構
+
+
+，使代碼成為自注釋的。
+說明：清晰準確的函數、變量等的命名，可增加代碼可讀性，並減少不必要的註釋。
+&frac12;    2-3：在代碼的功能、意圖層次上進行註釋，提供有用、額外的信息。
+說明：註釋的目的是解釋代碼的目的、功能和採用的方法，提供代碼以外的信息，幫助讀
+
+
+者理解代碼，防止沒必要的重複註釋信息。
+示例：如下注釋意義不大。
+/* if receive_flag is TRUE */
+if (receive_flag)
+
+而如下的註釋則給出了額外有用的信息。 
+/* if mtp receive a message from links */
+if (receive_flag)
+&frac12;    2-4：在程序塊的結束行右方加註釋標記，以表明某程序塊的結束。
+說明：當代碼段較長，特別是多重嵌套時，這樣做可以使代碼更清晰，更便於閱讀。
+示例：參見如下例子。
+if (...)
+{
+    // program code
+
+    while (index < MAX_INDEX)
+    {
+        // program code
+    } /* end of while (index < MAX_INDEX) */ // 指明該條while語句結束
+} /* end of  if (...)*/ // 指明是哪條if語句結束
+&frac12;    2-5：註釋格式儘量統一，建議使用“/* …… */”。
+&frac12;    2-6：註釋應考慮程序易讀及外觀排版的因素，使用的語言若是中、英兼有的，
+
+
+建議多使用中文，除非能用非常流利準確的英文表達。
+說明：註釋語言不統一，影響程序易讀性和外觀排版，出於對維護人員的考慮，建議使用
+
+
+中文。
+ 
+3 標識符命名
+&sup1;  3-1：標識符的命名要清晰、明瞭，有明確含義，同時使用完整的單詞或大家基本
+
+
+可以理解的縮寫，避免使人產生誤解。
+說明：較短的單詞可通過去掉“元音”形成縮寫；較長的單詞可取單詞的頭幾個字母形成
+
+
+縮寫；一些單詞有大家公認的縮寫。
+示例：如下單詞的縮寫能夠被大家基本認可。
+temp 可縮寫為  tmp  ;
+flag 可縮寫為  flg  ;
+statistic 可縮寫為  stat ;
+increment 可縮寫為  inc  ;
+message 可縮寫為  msg  ;
+&sup1;  3-2：命名中若使用特殊約定或縮寫，則要有註釋說明。
+說明：應該在源文件的開始之處，對文件中所使用的縮寫或約定，特別是特殊的縮寫，進
+
+
+行必要的註釋說明。
+&sup1;  3-3：自己特有的命名風格，要自始至終保持一致，不可來回變化。
+說明：個人的命名風格，在符合所在項目組或產品組的命名規則的前提下，才可使用。（
+
+
+即命名規則中沒有規定到的地方才可有個人命名風格）。
+&sup1;  3-4：對於變量命名，禁止取單個字符（如i、j、k...），建議除了要有具體含義
+
+
+外，還能表明其變量類型、數據類型等，但i、j、k作局部循環變量是允許的。
+說明：變量，尤其是局部變量，如果用單個字符表示，很容易敲錯（如i寫成j），而編譯
+
+
+時又檢查不出來，有可能為了這個小小的錯誤而花費大量的查錯時間。
+示例：下面所示的局部變量名的定義方法可以借鑑。
+int liv_Width
+其變量名解釋如下：
+        l      局部變量（Local）  （其它：g    全局變量（Global）...）
+        i      數據類型（Interger）
+        v      變量（Variable）   （其它：c    常量（Const）...）
+        Width  變量含義
+這樣可以防止局部變量與全局變量重名。
+&sup1;  3-5：命名規範必須與所使用的系統風格保持一致，並在同一項目中統一，比如採
+
+
+用UNIX的全小寫加下劃線的風格或大小寫混排的方式，不要使用大小寫與下劃線混排的方
+
+
+式，用作特殊標識如標識成員變量或全局變量的m_和g_，其後加上大小寫混排的方式是允
+
+
+許的。
+示例： Add_User不允許，add_user、AddUser、m_AddUser允許。 
+&frac12;    3-1：除非必要，不要用數字或較奇怪的字符來定義標識符。
+示例：如下命名，使人產生疑惑。
+#define _EXAMPLE_0_TEST_
+#define _EXAMPLE_1_TEST_
+void set_sls00( BYTE sls );
+
+應改為有意義的單詞命名
+#define _EXAMPLE_UNIT_TEST_
+#define _EXAMPLE_ASSERT_TEST_
+void set_udt_msg_sls( BYTE sls );
+&frac12;    3-2：在同一軟件產品內，應規劃好接口部分標識符（變量、結構、函數及常量
+
+
+）的命名，防止編譯、鏈接時產生衝突。
+說明：對接口部分的標識符應該有更嚴格限制，防止衝突。如可規定接口部分的變量與常
+
+
+量之前加上“模塊”標識等。
+&frac12;    3-3：用正確的反義詞組命名具有互斥意義的變量或相反動作的函數等。
+說明：下面是一些在軟件中常用的反義詞組。
+add / remove       begin / end        create / destroy 
+insert / delete    first / last       get / release
+increment / decrement                 put / get
+add / delete       lock / unlock      open / close
+min / max          old / new          start / stop
+next / previous    source / target    show / hide
+send / receive     source / destination
+cut / paste        up / down
+示例：
+int  min_sum;
+int  max_sum;
+int  add_user( BYTE *user_name );
+int  delete_user( BYTE *user_name );
+&frac12;    3-4：除了編譯開關/頭文件等特殊應用，應避免使用_EXAMPLE_TEST_之類以下劃
+
+
+線開始和結尾的定義。
+      
+4 可讀性
+&sup1;  4-1：注意運算符的優先級，並用括號明確表達式的操作順序，避免使用默認優先
+
+
+級。
+說明：防止閱讀程序時產生誤解，防止因默認的優先級與設計思想不符而導致程序出錯。
+
+
+
+示例：下列語句中的表達式
+word = (high << 8) | low     (1)
+if ((a | b) && (a & c))      (2)
+if ((a | b) < (c & d))       (3)
+如果書寫為
+high << 8 | low
+a | b && a & c
+a | b < c & d
+由於
+high << 8 | low = ( high << 8) | low,
+a | b && a & c = (a | b) && (a & c)，
+(1)(2)不會出錯，但語句不易理解；
+a | b < c & d = a | （b < c） & d，(3)造成了判斷條件出錯。
+&sup1;  4-2：避免使用不易理解的數字，用有意義的標識來替代。涉及物理狀態或者含有
+
+
+物理意義的常量，不應直接使用數字，必須用有意義的枚舉或宏來代替。
+示例：如下的程序可讀性差。
+if (Trunk[index].trunk_state == 0)
+{
+    Trunk[index].trunk_state = 1;
+    ...  // program code
+}
+
+應改為如下形式。
+#define TRUNK_IDLE 0
+#define TRUNK_BUSY 1
+
+if (Trunk[index].trunk_state == TRUNK_IDLE)
+{
+    Trunk[index].trunk_state = TRUNK_BUSY;
+    ...  // program code
+}
+&frac12;    4-1：源程序中關係較為緊密的代碼應儘可能相鄰。
+說明：便於程序閱讀和查找。
+示例：以下代碼佈局不太合理。
+rect.length = 10;
+char_poi = str;
+rect.width = 5;
+
+若按如下形式書寫，可能更清晰一些。
+rect.length = 10;
+rect.width = 5; // 矩形的長與寬關係較密切，放在一起。
+char_poi = str;
+&frac12;    4-2：不要使用難懂的技巧性很高的語句，除非很有必要時。
+說明：高技巧語句不等於高效率的程序，實際上程序的效率關鍵在於算法。
+示例：如下表達式，考慮不周就可能出問題，也較難理解。
+* stat_poi ++ += 1;
+
+* ++ stat_poi += 1;
+
+應分別改為如下。
+*stat_poi += 1;
+stat_poi++;     // 此二語句功能相當於“ * stat_poi ++ += 1; ”
+
+++ stat_poi;
+*stat_poi += 1; // 此二語句功能相當於“ * ++ stat_poi += 1; ” 
+5 變量、結構
+&sup1;  5-1：去掉沒必要的公共變量。
+說明：公共變量是增大模塊間耦合的原因之一，故應減少沒必要的公共變量以降低模塊間
+
+
+的耦合度。
+&sup1;  5-2：仔細定義並明確公共變量的含義、作用、取值範圍及公共變量間的關係。
+
+
+
+說明：在對變量聲明的同時，應對其含義、作用及取值範圍進行註釋說明，同時若有必要
+
+
+還應說明與其它變量的關係。
+&sup1;  5-3：明確公共變量與操作此公共變量的函數或過程的關係，如訪問、修改及創建
+
+
+等。
+說明：明確過程操作變量的關係後，將有利於程序的進一步優化、單元測試、系統聯調以
+
+
+及代碼維護等。這種關係的說明可在註釋或文檔中描述。
+示例：在源文件中，可按如下注釋形式說明。
+RELATION    System_Init    Input_Rec    Print_Rec   Stat_Score
+Student     Create         Modify       Access      Access
+Score       Create         Modify       Access      Access, Modify
+
+注：RELATION為操作關係；System_Init、Input_Rec、Print_Rec、Stat_Score為四個不同
+
+
+的函數；Student、Score為兩個全局變量；Create表示創建，Modify表示修改，Access表
+
+
+示訪問。
+其中，函數Input_Rec、Stat_Score都可修改變量Score，故此變量將引起函數間較大的耦
+
+
+合，並可能增加代碼測試、維護的難度。
+&sup1;  5-4：當向公共變量傳遞數據時，要十分小心，防止賦與不合理的值或越界等現象
+
+
+發生。
+說明：對公共變量賦值時，若有必要應進行合法性檢查，以提高代碼的可靠性、穩定性。
+
+
+
+&sup1;  5-5：防止局部變量與公共變量同名。
+說明：若使用了較好的命名規則，那麼此問題可自動消除。
+&sup1;  5-6：嚴禁使用未經初始化的變量作為右值。
+說明：特別是在C/C++中引用未經賦值的指針，經常會引起系統崩潰。
+&frac12;    5-1：構造僅有一個模塊或函數可以修改、創建，而其餘有關模塊或函數只訪問
+
+
+的公共變量，防止多個不同模塊或函數都可以修改、創建同一公共變量的現象。
+說明：降低公共變量耦合度。
+&frac12;    5-2：使用嚴格形式定義的、可移植的數據類型，儘量不要使用與具體硬件或軟
+
+
+件環境關係密切的變量。
+說明：使用標準的數據類型，有利於程序的移植。
+示例：如下例子（在DOS下BC3.1環境中），在移植時可能產生問題。
+void main()
+{
+    register int index; // 寄存器變量
+
+    _AX = 0x4000; // _AX是BC3.1提供的寄存器“偽變量”
+    ... // program code
+}
+&frac12;    5-3：結構的功能要單一，是針對一種事務的抽象。
+說明：設計結構時應力爭使結構代表一種現實事務的抽象，而不是同時代表多種。結構中
+
+
+的各元素應代表同一事務的不同側面，而不應把描述沒有關係或關係很弱的不同事務的元
+
+
+素放到同一結構中。
+示例：如下結構不太清晰、合理。
+typedef struct STUDENT_STRU
+{
+    unsigned char name[8]; /* student's name */
+    unsigned char age;     /* student's age */
+    unsigned char sex;     /* student's sex, as follows */
+                           /* 0 - FEMALE; 1 - MALE */
+    unsigned char 
+           teacher_name[8]; /* the student teacher's name */
+    unisgned char 
+           teacher_sex;     /* his teacher sex */
+} STUDENT;
+
+若改為如下，可能更合理些。
+typedef struct TEACHER_STRU
+{
+    unsigned char name[8]; /* teacher name */
+    unisgned char sex;     /* teacher sex, as follows */
+                           /* 0 - FEMALE; 1 - MALE */
+} TEACHER;
+
+typedef struct STUDENT_STRU
+{
+    unsigned char name[8];     /* student's name */
+    unsigned char age;         /* student's age */
+    unsigned char sex;         /* student's sex, as follows */
+                               /* 0 - FEMALE; 1 - MALE */
+    unsigned int  teacher_ind; /* his teacher index */
+} STUDENT;
+&frac12;    5-4：不要設計面面俱到、非常靈活的數據結構。
+說明：面面俱到、靈活的數據結構反而容易引起誤解和操作困難。
+&frac12;    5-5：不同結構間的關係不要過於複雜。
+說明：若兩個結構間關係較複雜、密切，那麼應合為一個結構。
+示例：如下兩個結構的構造不合理。
+typedef struct PERSON_ONE_STRU
+{
+    unsigned char name[8];
+    unsigned char addr[40];
+    unsigned char sex;
+    unsigned char city[15];
+} PERSON_ONE;
+
+typedef struct PERSON_TWO_STRU
+{
+    unsigned char name[8];
+    unsigned char age;
+    unsigned char tel;
+} PERSON_TWO;
+
+由於兩個結構都是描述同一事物的，那麼不如合成一個結構。
+typedef struct PERSON_STRU
+{
+    unsigned char name[8];
+    unsigned char age;
+    unsigned char sex;
+    unsigned char addr[40];
+    unsigned char city[15];
+    unsigned char tel;
+} PERSON;
+&frac12;    5-6：結構中元素的個數應適中。若結構中元素個數過多可考慮依據某種原則把
+
+
+元素組成不同的子結構，以減少原結構中元素的個數。
+說明：增加結構的可理解性、可操作性和可維護性。
+示例：假如認為如上的_PERSON結構元素過多，那麼可如下對之劃分。
+typedef struct PERSON_BASE_INFO_STRU
+{
+    unsigned char name[8];
+    unsigned char age;
+    unsigned char sex;
+} PERSON_BASE_INFO;
+
+typedef struct PERSON_ADDRESS_STRU
+{
+    unsigned char addr[40];
+    unsigned char city[15];
+    unsigned char tel;
+} PERSON_ADDRESS;
+
+typedef struct PERSON_STRU
+{
+    PERSON_BASE_INFO person_base;
+    PERSON_ADDRESS person_addr;
+} PERSON;
+&frac12;    5-7：仔細設計結構中元素的佈局與排列順序，使結構容易理解、節省佔用空間
+
+
+，並減少引起誤用現象。
+說明：合理排列結構中元素順序，可節省空間並增加可理解性。
+示例：如下結構中的位域排列，將佔較大空間，可讀性也稍差。
+typedef struct EXAMPLE_STRU
+{
+    unsigned int valid: 1;
+    PERSON person;
+    unsigned int set_flg: 1;
+} EXAMPLE;
+
+若改成如下形式，不僅可節省1字節空間，可讀性也變好了。
+typedef struct EXAMPLE_STRU
+{
+    unsigned int valid: 1;
+    unsigned int set_flg: 1;
+    PERSON person ;
+} EXAMPLE;
+&frac12;    5-8：結構的設計要儘量考慮向前兼容和以後的版本升級，併為某些未來可能的
+
+
+應用保留餘地（如預留一些空間等）。
+說明：軟件向前兼容的特性，是軟件產品是否成功的重要標誌之一。如果要想使產品具有
+
+
+較好的前向兼容，那麼在產品設計之初就應為以後版本升級保留一定餘地，並且在產品升
+
+
+級時必須考慮前一版本的各種特性。
+&frac12;    5-9：留心具體語言及編譯器處理不同數據類型的原則及有關細節。
+說明：如在C語言中，static局部變量將在內存“數據區”中生成，而非static局部變量將
+
+
+在“堆棧”中生成。這些細節對程序質量的保證非常重要。
+&frac12;    5-10：編程時，要注意數據類型的強制轉換。
+說明：當進行數據類型強制轉換時，其數據的意義、轉換後的取值等都有可能發生變化，
+
+
+而這些細節若考慮不周，就很有可能留下隱患。
+&frac12;    5-11：對編譯系統默認的數據類型轉換，也要有充分的認識。
+示例：如下賦值，多數編譯器不產生告警，但值的含義還是稍有變化。
+char chr;
+unsigned short int exam;
+
+chr = -1;
+exam = chr; // 編譯器不產生告警，此時exam為0xFFFF。
+&frac12;    5-12：儘量減少沒有必要的數據類型默認轉換與強制轉換。
+&frac12;    5-13：合理地設計數據並使用自定義數據類型，避免數據間進行不必要的類型轉
+
+
+換。
+&frac12;    5-14：對自定義數據類型進行恰當命名，使它成為自描述性的，以提高代碼可讀
+
+
+性。注意其命名方式在同一產品中的統一。
+說明：使用自定義類型，可以彌補編程語言提供類型少、信息量不足的缺點，並能使程序
+
+
+清晰、簡潔。
+示例：可參考如下方式聲明自定義數據類型。
+
+下面的聲明可使數據類型的使用簡潔、明瞭。
+typedef unsigned char  BYTE;
+typedef unsigned short WORD;
+typedef unsigned int   DWORD;
+
+下面的聲明可使數據類型具有更豐富的含義。
+typedef float DISTANCE;
+typedef float SCORE;
+&frac12;    5-15：當聲明用於分佈式環境或不同CPU間通信環境的數據結構時，必須考慮機
+
+
+器的字節順序、使用的位域及字節對齊等問題 。
+說明：比如Intel CPU與68360 CPU，在處理位域及整數時，其在內存存放的“順序”正好
+
+
+相反。
+示例：假如有如下短整數及結構。
+unsigned short int exam;
+typedef struct EXAM_BIT_STRU
+{                       /* Intel 68360 */
+    unsigned int A1: 1; /* bit  0      7   */
+    unsigned int A2: 1; /* bit  1      6   */
+    unsigned int A3: 1; /* bit  2      5   */
+} EXAM_BIT;
+
+如下是Intel CPU生成短整數及位域的方式。
+內存： 0          1         2    ...  （從低到高，以字節為單位）
+exam  exam低字節  exam高字節
+
+內存：        0 bit     1 bit      2 bit    ...  （字節的各“位”）
+EXAM_BIT     A1        A2         A3
+
+如下是68360 CPU生成短整數及位域的方式。
+內存： 0          1         2    ...  （從低到高，以字節為單位）
+exam  exam高字節  exam低字節
+
+內存：        7 bit     6 bit      5 bit    ...  （字節的各“位”）
+EXAM_BIT     A1        A2         A3
+
+說明：在對齊方式下，CPU的運行效率要快得多。
+示例：如下圖，當一個long型數（如圖中long1）在內存中的位置正好與內存的字邊界對齊
+
+
+時，CPU存取這個數只需訪問一次內存，而當一個long型數（如圖中的long2）在內存中的
+
+
+位置跨越了字邊界時，CPU存取這個數就需要多次訪問內存，如i960cx訪問這樣的數需讀內
+
+
+存三次（一個BYTE、一個SHORT、一個BYTE，由CPU的微代碼執行，對軟件透明），所有對
+
+
+齊方式下CPU的運行效率明顯快多了。
+    1       8       16      24      32
+    ------- ------- ------- -------
+    | long1 | long1 | long1 | long1 |
+    ------- ------- ------- -------
+    |       |       |       | long2 |
+    ------- ------- ------- --------
+    | long2 | long2 | long2 |       |
+    ------- ------- ------- --------
+    | .... 
+6 函數、過程
+&sup1;  6-1：對所調用函數的錯誤返回碼要仔細、全面地處理。
+&sup1;  6-2：明確函數功能，精確（而不是近似）地實現函數設計。
+&sup1;  6-3：編寫可重入函數時，應注意局部變量的使用（如編寫C/C++語言的可重入函數
+
+
+時，應使用auto即缺省態局部變量或寄存器變量）。
+說明：編寫C/C++語言的可重入函數時，不應使用static局部變量，否則必須經過特殊處理
+
+
+，才能使函數具有可重入性。
+&sup1;  6-4：編寫可重入函數時，若使用全局變量，則應通過關中斷、信號量（即P、V操
+
+
+作）等手段對其加以保護。
+說明：若對所使用的全局變量不加以保護，則此函數就不具有可重入性，即當多個進程調
+
+
+用此函數時，很有可能使有關全局變量變為不可知狀態。
+示例：假設Exam是int型全局變量，函數Squre_Exam返回Exam平方值。那麼如下函數不具有
+
+
+可重入性。
+unsigned int example( int para )
+{
+    unsigned int temp;
+
+    Exam = para; // （**）
+    temp = Square_Exam( );
+
+    return temp;
+}
+
+此函數若被多個進程調用的話，其結果可能是未知的，因為當（**）語句剛執行完後，另
+
+
+外一個使用本函數的進程可能正好被激活，那麼當新激活的進程執行到此函數時，將使Ex
+
+
+am賦與另一個不同的para值，所以當控制重新回到“temp = Square_Exam( )”後，計算出
+
+
+的temp很可能不是預想中的結果。此函數應如下改進。
+unsigned int example( int para )
+{
+    unsigned int temp;
+
+    [申請信號量操作]          // 若申請不到“信號量”，說明另外的進程正處於
+    Exam = para;            // 給Exam賦值並計算其平方過程中（即正在使用此
+    temp = Square_Exam( );  // 信號），本進程必須等待其釋放信號後，才可繼
+    [釋放信號量操作]          // 續執行。若申請到信號，則可繼續執行，但其
+                            // 它進程必須等待本進程釋放信號量後，才能再使
+                            // 用本信號。
+    return temp;
+}
+&sup1;  6-5：在同一項目組應明確規定對接口函數參數的合法性檢查應由函數的調用者負
+
+
+責還是由接口函數本身負責，缺省是由函數調用者負責。
+說明：對於模塊間接口函數的參數的合法性檢查這一問題，往往有兩個極端現象，即：要
+
+
+麼是調用者和被調用者對參數均不作合法性檢查，結果就遺漏了合法性檢查這一必要的處
+
+
+理過程，造成問題隱患；要麼就是調用者和被調用者均對參數進行合法性檢查，這種情況
+
+
+雖不會造成問題，但產生了冗餘代碼，降低了效率。
+&frac12;    6-1：防止將函數的參數作為工作變量。
+說明：將函數的參數作為工作變量，有可能錯誤地改變參數內容，所以很危險。對必須改
+
+
+變的參數，最好先用局部變量代之，最後再將該局部變量的內容賦給該參數。
+示例：下函數的實現不太好。
+void sum_data( unsigned int num, int *data, int *sum )
+{
+    unsigned int count;
+    
+    *sum = 0;
+    for (count = 0; count < num; count++)
+    {
+        *sum  += data[count]; // sum成了工作變量，不太好。
+    }
+}
+
+若改為如下，則更好些。
+void sum_data( unsigned int num, int *data, int *sum )
+{
+    unsigned int count ;
+    int sum_temp;
+    
+    sum_temp = 0;
+    for (count = 0; count < num; count ++)
+    {
+        sum_temp  += data[count]; 
+    }
+    
+    *sum = sum_temp;
+}
+&frac12;    6-2：函數的規模儘量限制在200行以內。
+說明：不包括註釋和空格行。
+&frac12;    6-3：一個函數僅完成一件功能。
+&frac12;    6-4：為簡單功能編寫函數。
+說明：雖然為僅用一兩行就可完成的功能去編函數好象沒有必要，但用函數可使功能明確
+
+
+化，增加程序可讀性，亦可方便維護、測試。
+示例：如下語句的功能不很明顯。
+value = ( a > b ) ? a : b ;
+
+改為如下就很清晰了。
+int max (int a, int b)
+{
+    return ((a > b) ? a : b);
+}
+
+value = max (a, b);
+
+或改為如下。
+#define MAX (a, b) (((a) > (b)) ? (a) : (b))
+
+value = MAX (a, b);
+&frac12;    6-5：不要設計多用途面面俱到的函數。
+說明：多功能集於一身的函數，很可能使函數的理解、測試、維護等變得困難。
+&frac12;    6-6：函數的功能應該是可以預測的，也就是隻要輸入數據相同就應產生同樣的
+
+
+輸出。
+說明：帶有內部“存儲器”的函數的功能可能是不可預測的，因為它的輸出可能取決於內
+
+
+部存儲器（如某標記）的狀態。這樣的函數既不易於理解又不利於測試和維護。在C/C++語
+
+
+言中，函數的static局部變量是函數的內部存儲器，有可能使函數的功能不可預測，然而
+
+
+，當某函數的返回值為指針類型時，則必須是STATIC的局部變量的地址作為返回值，若為
+
+
+AUTO類，則返回為錯針。
+示例：如下函數，其返回值（即功能）是不可預測的。
+unsigned int integer_sum( unsigned int base )
+{
+    unsigned int index;
+    static unsigned int sum = 0; // 注意，是static類型的。
+                                 // 若改為auto類型，則函數即變為可預測。
+    for (index = 1; index <= base; index++)
+    {
+        sum += index;
+    }
+
+    return sum;
+}
+&frac12;    6-7：儘量不要編寫依賴於其他函數內部實現的函數。
+說明：此條為函數獨立性的基本要求。由於目前大部分高級語言都是結構化的，所以通過
+
+
+具體語言的語法要求與編譯器功能，基本就可以防止這種情況發生。但在彙編語言中，由
+
+
+於其靈活性，很可能使函數出現這種情況。
+示例：如下是在DOS下TASM的彙編程序例子。過程Print_Msg的實現依賴於Input_Msg的具體
+
+
+實現，這種程序是非結構化的，難以維護、修改。
+...  // 程序代碼
+proc Print_Msg // 過程（函數）Print_Msg
+    ...  // 程序代碼
+    jmp  LABEL
+    ...  // 程序代碼
+endp
+
+proc Input_Msg // 過程（函數）Input_Msg
+    ...  // 程序代碼
+LABEL:
+    ...  // 程序代碼
+endp
+&frac12;    6-8：避免設計多參數函數，不使用的參數從接口中去掉。
+說明：目的減少函數間接口的複雜度。
+&frac12;    6-9：非調度函數應減少或防止控制參數，儘量只使用數據參數。
+說明：本建議目的是防止函數間的控制耦合。調度函數是指根據輸入的消息類型或控制命
+
+
+令，來啟動相應的功能實體（即函數或過程），而本身並不完成具體功能。控制參數是指
+
+
+改變函數功能行為的參數，即函數要根據此參數來決定具體怎樣工作。非調度函數的控制
+
+
+參數增加了函數間的控制耦合，很可能使函數間的耦合度增大，並使函數的功能不唯一。
+
+
+
+示例：如下函數構造不太合理。
+int add_sub( int a, int b, unsigned char add_sub_flg )
+{
+    if (add_sub_flg == INTEGER_ADD)
+    {
+        return (a + b);
+    }
+    else
+    {
+        return (a   b);
+    }
+}
+
+不如分為如下兩個函數清晰。
+int add( int a, int b )
+{
+    return (a + b);
+}
+
+int sub( int a, int b ) 
+{
+    return (a   b);
+}
+&frac12;    6-10：檢查函數所有參數輸入的有效性。
+&frac12;    6-11：檢查函數所有非參數輸入的有效性，如數據文件、公共變量等。
+說明：函數的輸入主要有兩種：一種是參數輸入；另一種是全局變量、數據文件的輸入，
+
+
+即非參數輸入。函數在使用輸入之前，應進行必要的檢查。
+&frac12;    6-12：函數名應準確描述函數的功能。
+&frac12;    6-13：使用動賓詞組為執行某操作的函數命名。如果是OOP方法，可以只有動詞
+
+
+（名詞是對象本身）。
+示例：參照如下方式命名函數。
+void print_record( unsigned int rec_ind ) ;
+int  input_record( void ) ;
+unsigned char get_current_color( void ) ;
+建議6-14：避免使用無意義或含義不清的動詞為函數命名。
+說明：避免用含義不清的動詞如process、handle等為函數命名，因為這些動詞並沒有說明
+
+
+要具體做什麼。
+建議6-15：函數的返回值要清楚、明瞭，讓使用者不容易忽視錯誤情況。
+說明：函數的每種出錯返回值的意義要清晰、明瞭、準確，防止使用者誤用、理解錯誤或
+
+
+忽視錯誤返回碼。
+&frac12;    6-16：除非必要，最好不要把與函數返回值類型不同的變量，以編譯系統默認的
+
+
+轉換方式或強制的轉換方式作為返回值返回。
+&frac12;    6-17：讓函數在調用點顯得易懂、容易理解。
+&frac12;    6-18：在調用函數填寫參數時，應儘量減少沒有必要的默認數據類型轉換或強制
+
+
+數據類型轉換。
+說明：因為數據類型轉換或多或少存在危險。
+&frac12;    6-19：避免函數中不必要語句，防止程序中的垃圾代碼。
+說明：程序中的垃圾代碼不僅佔用額外的空間，而且還常常影響程序的功能與性能，很可
+
+
+能給程序的測試、維護等造成不必要的麻煩。
+&frac12;    6-20：防止把沒有關聯的語句放到一個函數中。
+說明：防止函數或過程內出現隨機內聚。隨機內聚是指將沒有關聯或關聯很弱的語句放到
+
+
+同一個函數或過程中。隨機內聚給函數或過程的維護、測試及以後的升級等造成了不便，
+
+
+同時也使函數或過程的功能不明確。使用隨機內聚函數，常常容易出現在一種應用場合需
+
+
+要改進此函數，而另一種應用場合又不允許這種改進，從而陷入困境。
+在編程時，經常遇到在不同函數中使用相同的代碼，許多開發人員都願把這些代碼提出來
+
+
+，並構成一個新函數。若這些代碼關聯較大並且是完成一個功能的，那麼這種構造是合理
+
+
+的，否則這種構造將產生隨機內聚的函數。
+示例：如下函數就是一種隨機內聚。
+void Init_Var( void )
+{
+    Rect.length = 0;
+    Rect.width = 0; /* 初始化矩形的長與寬 */
+    
+    Point.x = 10;
+    Point.y = 10;   /* 初始化“點”的座標 */
+}
+
+矩形的長、寬與點的座標基本沒有任何關係，故以上函數是隨機內聚。
+應如下分為兩個函數：
+void Init_Rect( void )
+{
+    Rect.length = 0;
+    Rect.width = 0; /* 初始化矩形的長與寬 */
+}
+
+void Init_Point( void )
+{
+    Point.x = 10;
+    Point.y = 10;   /* 初始化“點”的座標 */
+}
+&frac12;    6-21：如果多段代碼重複做同一件事情，那麼在函數的劃分上可能存在問題。
+
+
+
+說明：若此段代碼各語句之間有實質性關聯並且是完成同一件功能的，那麼可考慮把此段
+
+
+代碼構造成一個新的函數。
+&frac12;    6-22：功能不明確較小的函數，特別是僅有一個上級函數調用它時，應考慮把它
+
+
+合併到上級函數中，而不必單獨存在。
+說明：模塊中函數劃分的過多，一般會使函數間的接口變得複雜。所以過小的函數，特別
+
+
+是扇入很低的或功能不明確的函數，不值得單獨存在。
+&frac12;    6-23：設計高扇入、合理扇出（小於7）的函數。
+說明：扇出是指一個函數直接調用（控制）其它函數的數目，而扇入是指有多少上級函數
+
+
+調用它。
+扇出過大，表明函數過分複雜，需要控制和協調過多的下級函數；而扇出過小，如總是1，
+
+
+表明函數的調用層次可能過多，這樣不利程序閱讀和函數結構的分析，並且程序運行時會
+
+
+對系統資源如堆棧空間等造成壓力。函數較合理的扇出（調度函數除外）通常是3-5。扇出
+
+
+太大，一般是由於缺乏中間層次，可適當增加中間層次的函數。扇出太小，可把下級函數
+
+
+進一步分解多個函數，或合併到上級函數中。當然分解或合併函數時，不能改變要實現的
+
+
+功能，也不能違背函數間的獨立性。
+扇入越大，表明使用此函數的上級函數越多，這樣的函數使用效率高，但不能違背函數間
+
+
+的獨立性而單純地追求高扇入。公共模塊中的函數及底層函數應該有較高的扇入。
+較良好的軟件結構通常是頂層函數的扇出較高，中層函數的扇出較少，而底層函數則扇入
+
+
+到公共模塊中。
+&frac12;    6-24：減少函數本身或函數間的遞歸調用。
+說明：遞歸調用特別是函數間的遞歸調用（如A->B->C->A），影響程序的可理解性；遞歸
+
+
+調用一般都佔用較多的系統資源（如棧空間）；遞歸調用對程序的測試有一定影響。故除
+
+
+非為某些算法或功能的實現方便，應減少沒必要的遞歸調用。
+&frac12;    6-25：仔細分析模塊的功能及性能需求，並進一步細分，同時若有必要畫出有關
+
+
+數據流圖，據此來進行模塊的函數劃分與組織。
+說明：函數的劃分與組織是模塊的實現過程中很關鍵的步驟，如何劃分出合理的函數結構
+
+
+，關係到模塊的最終效率和可維護性、可測性等。根據模塊的功能圖或/及數據流圖映射出
+
+
+函數結構是常用方法之一。
+&frac12;    6-26：改進模塊中函數的結構，降低函數間的耦合度，並提高函數的獨立性以及
+
+
+代碼可讀性、效率和可維護性。優化函數結構時，要遵守以下原則：
+（1）不能影響模塊功能的實現。
+（2）仔細考查模塊或函數出錯處理及模塊的性能要求並進行完善。
+（3）通過分解或合併函數來改進軟件結構。
+（4）考查函數的規模，過大的要進行分解。
+（5）降低函數間接口的複雜度。
+（6）不同層次的函數調用要有較合理的扇入、扇出。
+（7）函數功能應可預測。
+（8）提高函數內聚。（單一功能的函數內聚最高）
+說明：對初步劃分後的函數結構應進行改進、優化，使之更為合理。
+&frac12;    6-27：在多任務操作系統的環境下編程，要注意函數可重入性的構造。
+說明：可重入性是指函數可以被多個任務進程調用。在多任務操作系統中，函數是否具有
+
+
+可重入性是非常重要的，因為這是多個進程可以共用此函數的必要條件。另外，編譯器是
+
+
+否提供可重入函數庫，與它所服務的操作系統有關，只有操作系統是多任務時，編譯器才
+
+
+有可能提供可重入函數庫。如DOS下BC和MSC等就不具備可重入函數庫，因為DOS是單用戶單
+
+
+任務操作系統。
+&frac12;    6-28：避免使用BOOL參數。
+說明：原因有二，其一是BOOL參數值無意義，TURE/FALSE的含義是非常模糊的，在調用時
+
+
+很難知道該參數到底傳達的是什麼意思；其二是BOOL參數值不利於擴充。還有NULL也是一
+
+
+個無意義的單詞。
+&frac12;    6-29： 對於提供了返回值的函數，在引用時最好使用其返回值。
+&frac12;    6-30：當一個過程（函數）中對較長變量（一般是結構的成員）有較多引用時，
+
+
+可以用一個意義相當的宏代替。 
+說明：這樣可以增加編程效率和程序的可讀性。
+示例：在某過程中較多引用TheReceiveBuffer[FirstSocket].byDataPtr，
+則可以通過以下宏定義來代替：
+# define pSOCKDATA TheReceiveBuffer[FirstScoket].byDataPtr
+ 
+7 可測性
+&sup1;  7-1：在同一項目組或產品組內，要有一套統一的為集成測試與系統聯調準備的調
+
+
+測開關及相應打印函數，並且要有詳細的說明。
+說明：本規則是針對項目組或產品組的。
+&sup1;  7-2：在同一項目組或產品組內，調測打印出的信息串的格式要有統一的形式。信
+
+
+息串中至少要有所在模塊名（或源文件名）及行號。
+說明：統一的調測信息格式便於集成測試。
+&sup1;  7-3：編程的同時要為單元測試選擇恰當的測試點，並仔細構造測試代碼、測試用
+
+
+例，同時給出明確的註釋說明。測試代碼部分應作為（模塊中的）一個子模塊，以方便測
+
+
+試代碼在模塊中的安裝與拆卸（通過調測開關）。
+說明：為單元測試而準備。
+&sup1;  7-4：在進行集成測試/系統聯調之前，要構造好測試環境、測試項目及測試用例，
+
+
+同時仔細分析並優化測試用例，以提高測試效率。
+說明：好的測試用例應儘可能模擬出程序所遇到的邊界值、各種複雜環境及一些極端情況
+
+
+等。
+&sup1;  7-5：使用斷言來發現軟件問題，提高代碼可測性。
+說明：斷言是對某種假設條件進行檢查（可理解為若條件成立則無動作，否則應報告），
+
+
+它可以快速發現並定位軟件問題，同時對系統錯誤進行自動報警。斷言可以對在系統中隱
+
+
+藏很深，用其它手段極難發現的問題進行定位，從而縮短軟件問題定位時間，提高系統的
+
+
+可測性。實際應用時，可根據具體情況靈活地設計斷言。
+示例：下面是C語言中的一個斷言，用宏來設計的。（其中NULL為0L）
+#ifdef _EXAM_ASSERT_TEST_  // 若使用斷言測試
+
+void exam_assert( char * file_name, unsigned int line_no )
+{
+    printf( "\n[EXAM]Assert failed: %s, line %u\n", 
+            file_name, line_no );
+    abort( );
+}
+
+#define  EXAM_ASSERT( condition )
+    if (condition) // 若條件成立，則無動作
+        NULL;
+    else  // 否則報告
+        exam_assert( __FILE__, __LINE__ ) 
+
+#else  // 若不使用斷言測試
+
+#define EXAM_ASSERT(condition)  NULL 
+
+#endif  /* end of ASSERT */
+&sup1;  7-6：用斷言來檢查程序正常運行時不應發生但在調測時有可能發生的非法情況。
+
+
+
+&sup1;  7-7：不能用斷言來檢查最終產品肯定會出現且必須處理的錯誤情況。
+說明：斷言是用來處理不應該發生的錯誤情況的，對於可能會發生的且必須處理的情況要
+
+
+寫防錯程序，而不是斷言。如某模塊收到其它模塊或鏈路上的消息後，要對消息的合理性
+
+
+進行檢查，此過程為正常的錯誤檢查，不能用斷言來實現。
+&sup1;  7-8：對較複雜的斷言加上明確的註釋。
+說明：為複雜的斷言加註釋，可澄清斷言含義並減少不必要的誤用。
+&sup1;  7-9：用斷言確認函數的參數。
+示例：假設某函數參數中有一個指針，那麼使用指針前可對它檢查，如下。
+int exam_fun( unsigned char *str )
+{
+    EXAM_ASSERT( str != NULL );  // 用斷言檢查“假設指針不為空”這個條件
+    
+    ... //other program code
+}
+&sup1;  7-10：用斷言保證沒有定義的特性或功能不被使用。
+示例：假設某通信模塊在設計時，準備提供“無連接”和“連接” 這兩種業務。但當前的
+
+
+版本中僅實現了“無連接”業務，且在此版本的正式發行版中，用戶（上層模塊）不應產
+
+
+生“連接”業務的請求，那麼在測試時可用斷言檢查用戶是否使用“連接”業務。如下。
+
+
+
+#define EXAM_CONNECTIONLESS 0 // 無連接業務
+#define EXAM_CONNECTION     1 // 連接業務
+
+int msg_process( EXAM_MESSAGE *msg )
+{
+    unsigned char service; /* message service class */
+
+    EXAM_ASSERT( msg != NULL );
+
+service = get_msg_service_class( msg );
+
+    EXAM_ASSERT( service != EXAM_CONNECTION ); // 假設不使用連接業務
+
+    ...  //other program code
+}
+&sup1;  7-11：用斷言對程序開發環境（OS/Compiler/Hardware）的假設進行檢查。
+說明：程序運行時所需的軟硬件環境及配置要求，不能用斷言來檢查，而必須由一段專門
+
+
+代碼處理。用斷言僅可對程序開發環境中的假設及所配置的某版本軟硬件是否具有某種功
+
+
+能的假設進行檢查。如某網卡是否在系統運行環境中配置了，應由程序中正式代碼來檢查
+
+
+；而此網卡是否具有某設想的功能，則可由斷言來檢查。
+對編譯器提供的功能及特性假設可用斷言檢查，原因是軟件最終產品（即運行代碼或機器
+
+
+碼）與編譯器已沒有任何直接關係，即軟件運行過程中（注意不是編譯過程中）不會也不
+
+
+應該對編譯器的功能提出任何需求。
+示例：用斷言檢查編譯器的int型數據佔用的內存空間是否為2，如下。
+EXAM_ASSERT( sizeof( int ) == 2 );
+&sup1;  7-12：正式軟件產品中應把斷言及其它調測代碼去掉（即把有關的調測開關關掉）
+
+
+。
+說明：加快軟件運行速度。
+&sup1;  7-13：在軟件系統中設置與取消有關測試手段，不能對軟件實現的功能等產生影響
+
+
+。
+說明：即有測試代碼的軟件和關掉測試代碼的軟件，在功能行為上應一致。
+&sup1;  7-14：用調測開關來切換軟件的DEBUG版和正式版，而不要同時存在正式版本和DE
+
+
+BUG版本的不同源文件，以減少維護的難度。
+&sup1;  7-15：軟件的DEBUG版本和發行版本應該統一維護，不允許分家，並且要時刻注意
+
+
+保證兩個版本在實現功能上的一致性。
+&frac12;    7-1：在編寫代碼之前，應預先設計好程序調試與測試的方法和手段，並設計好
+
+
+各種調測開關及相應測試代碼如打印函數等。
+說明：程序的調試與測試是軟件生存週期中很重要的一個階段，如何對軟件進行較全面、
+
+
+高率的測試並儘可能地找出軟件中的錯誤就成為很關鍵的問題。因此在編寫源代碼之前，
+
+
+除了要有一套比較完善的測試計劃外，還應設計出一系列代碼測試手段，為單元測試、集
+
+
+成測試及系統聯調提供方便。
+&frac12;    7-2：調測開關應分為不同級別和類型。
+說明：調測開關的設置及分類應從以下幾方面考慮：針對模塊或系統某部分代碼的調測；
+
+
+針對模塊或系統某功能的調測；出於某種其它目的，如對性能、容量等的測試。這樣做便
+
+
+於軟件功能的調測，並且便於模塊的單元測試、系統聯調等。
+&frac12;    7-3：編寫防錯程序，然後在處理錯誤之後可用斷言宣佈發生錯誤。
+示例：假如某模塊收到通信鏈路上的消息，則應對消息的合法性進行檢查，若消息類別不
+
+
+是通信協議中規定的，則應進行出錯處理，之後可用斷言報告，如下例。
+#ifdef _EXAM_ASSERT_TEST_ // 若使用斷言測試
+
+/* Notice: this function does not call 'abort' to exit program */
+void assert_report( char * file_name, unsigned int line_no )
+{
+    printf( "\n[EXAM]Error Report: %s, line %u\n", 
+            file_name, line_no );
+}
+
+#define  ASSERT_REPORT( condition ) 
+    if ( condition ) // 若條件成立，則無動作
+        NULL;
+    else // 否則報告
+        assert_report ( __FILE__, __LINE__ ) 
+
+#else // 若不使用斷言測試
+
+#define ASSERT_REPORT( condition )  NULL 
+
+#endif /* end of ASSERT */
+
+int msg_handle( unsigned char msg_name, unsigned char * msg )
+{
+    switch( msg_name )
+    {
+        case MSG_ONE:
+            ... // 消息MSG_ONE處理
+            return MSG_HANDLE_SUCCESS;
+    
+            ... // 其它合法消息處理
+    
+        default:
+            ... // 消息出錯處理
+            ASSERT_REPORT( FALSE );  // “合法”消息不成立，報告
+            return MSG_HANDLE_ERROR;
+    }
+} 
+8 程序效率
+&sup1;  8-1：編程時要經常注意代碼的效率。
+說明：代碼效率分為全局效率、局部效率、時間效率及空間效率。全局效率是站在整個系
+
+
+統的角度上的系統效率；局部效率是站在模塊或函數角度上的效率；時間效率是程序處理
+
+
+輸入任務所需的時間長短；空間效率是程序所需內存空間，如機器代碼空間大小、數據空
+
+
+間大小、棧空間大小等。
+&sup1;  8-2：在保證軟件系統的正確性、穩定性、可讀性及可測性的前提下，提高代碼效
+
+
+率。
+說明：不能一味地追求代碼效率，而對軟件的正確性、穩定性、可讀性及可測性造成影響
+
+
+。
+&sup1;  8-3：局部效率應為全局效率服務，不能因為提高局部效率而對全局效率造成影響
+
+
+。
+&sup1;  8-4：通過對系統數據結構的劃分與組織的改進，以及對程序算法的優化來提高空
+
+
+間效率。
+說明：這種方式是解決軟件空間效率的根本辦法。
+示例：如下記錄學生學習成績的結構不合理。
+typedef unsigned char  BYTE;
+typedef unsigned short WORD;
+
+typedef struct STUDENT_SCORE_STRU
+
+
+    BYTE name[8];
+    BYTE age;
+    BYTE sex;
+    BYTE class;
+    BYTE subject;
+    float score;
+} STUDENT_SCORE;
+
+因為每位學生都有多科學習成績，故如上結構將佔用較大空間。應如下改進（分為兩個結
+
+
+構），總的存貯空間將變小，操作也變得更方便。
+typedef struct STUDENT_STRU
+{
+    BYTE name[8];
+    BYTE age;
+    BYTE sex;
+    BYTE class;
+} STUDENT;
+
+typedef struct STUDENT_SCORE_STRU
+{
+    WORD student_index;
+    BYTE subject;
+    float score;
+} STUDENT_SCORE;
+&sup1;  8-5：循環體內工作量最小化。
+說明：應仔細考慮循環體內的語句是否可以放在循環體之外，使循環體內工作量最小，從
+
+
+而提高程序的時間效率。
+示例：如下代碼效率不高。
+for (ind = 0; ind < MAX_ADD_NUMBER; ind++)
+{
+    sum += ind;
+    back_sum = sum; /* backup sum */
+}
+
+語句“back_sum = sum;”完全可以放在for語句之後，如下。
+for (ind = 0; ind < MAX_ADD_NUMBER; ind++)
+{
+    sum += ind;
+}
+back_sum  = sum; /* backup sum */
+&frac12;    8-1：仔細分析有關算法，並進行優化。
+&frac12;    8-2：仔細考查、分析系統及模塊處理輸入（如事務、消息等）的方式，並加以
+
+
+改進。
+&frac12;    8-3：對模塊中函數的劃分及組織方式進行分析、優化，改進模塊中函數的組織
+
+
+結構，提高程序效率。
+說明：軟件系統的效率主要與算法、處理任務方式、系統功能及函數結構有很大關係，僅
+
+
+在代碼上下功夫一般不能解決根本問題。
+&frac12;    8-4：編程時，要隨時留心代碼效率；優化代碼時，要考慮周全。
+&frac12;    8-5：不應花過多的時間拼命地提高調用不很頻繁的函數代碼效率。
+說明：對代碼優化可提高效率，但若考慮不周很有可能引起嚴重後果。
+&frac12;    8-6：要仔細地構造或直接用匯編編寫調用頻繁或性能要求極高的函數。
+說明：只有對編譯系統產生機器碼的方式以及硬件系統較為熟悉時，才可使用匯編嵌入方
+
+
+式。嵌入彙編可提高時間及空間效率，但也存在一定風險。
+&frac12;    8-7：在保證程序質量的前提下，通過壓縮代碼量、去掉不必要代碼以及減少不
+
+
+必要的局部和全局變量，來提高空間效率。
+說明：這種方式對提高空間效率可起到一定作用，但往往不能解決根本問題。
+&frac12;    8-8：在多重循環中，應將最忙的循環放在最內層。
+說明：減少CPU切入循環層的次數。
+示例：如下代碼效率不高。
+for (row = 0; row < 100; row++)
+{
+    for (col = 0; col < 5; col++)
+    {
+        sum += a[row][col];
+    }
+}
+
+可以改為如下方式，以提高效率。
+for (col = 0; col < 5; col++)
+{
+    for (row = 0; row < 100; row++)
+    {
+        sum += a[row][col];
+    }
+}
+&frac12;    8-9：儘量減少循環嵌套層次。
+&frac12;    8-10：避免循環體內含判斷語句，應將循環語句置於判斷語句的代碼塊之中。
+
+
+
+說明：目的是減少判斷次數。循環體中的判斷語句是否可以移到循環體外，要視程序的具
+
+
+體情況而言，一般情況，與循環變量無關的判斷語句可以移到循環體外，而有關的則不可
+
+
+以。
+示例：如下代碼效率稍低。
+for (ind = 0; ind < MAX_RECT_NUMBER; ind++)
+{
+    if (data_type == RECT_AREA)
+    {
+        area_sum += rect_area[ind];
+    }
+    else
+    {
+        rect_length_sum += rect[ind].length;
+        rect_width_sum += rect[ind].width;
+    }
+}
+
+因為判斷語句與循環變量無關，故可如下改進，以減少判斷次數。
+if (data_type == RECT_AREA)
+{
+    for (ind = 0; ind < MAX_RECT_NUMBER; ind++)
+    {
+        area_sum += rect_area[ind];
+    }
+}
+else
+{
+    for (ind = 0; ind < MAX_RECT_NUMBER; ind++)
+    {
+        rect_length_sum += rect[ind].length;
+        rect_width_sum  += rect[ind].width;
+    }
+}
+&frac12;    8-11：儘量用乘法或其它方法代替除法，特別是浮點運算中的除法。
+說明：浮點運算除法要佔用較多CPU資源。
+示例：如下表達式運算可能要佔較多CPU資源。
+#define PAI 3.1416
+radius = circle_length / (2 * PAI);
+
+應如下把浮點除法改為浮點乘法。
+#define PAI_RECIPROCAL (1 / 3.1416 ) // 編譯器編譯時，將生成具體浮點數
+radius = circle_length * PAI_RECIPROCAL / 2; 
+&frac12;    8-12：不要一味追求緊湊的代碼。
+說明：因為緊湊的代碼並不代表高效的機器碼。 
+9 質量保證
+&sup1;  9-1：在軟件設計過程中構築軟件質量。
+&sup1;  9-2：代碼質量保證優先原則
+     （1）正確性，指程序要實現設計要求的功能。
+     （2）穩定性、安全性，指程序穩定、可靠、安全。
+     （3）可測試性，指程序要具有良好的可測試性。
+     （4）規範/可讀性，指程序書寫風格、命名規則等要符合規範。
+     （5）全局效率，指軟件系統的整體效率。
+     （6）局部效率，指某個模塊/子模塊/函數的本身效率。
+     （7）個人表達方式/個人方便性，指個人編程習慣。
+&sup1;  9-3：只引用屬於自己的存貯空間。
+說明：若模塊封裝的較好，那麼一般不會發生非法引用他人的空間。
+&sup1;  9-4：防止引用已經釋放的內存空間。
+說明：在實際編程過程中，稍不留心就會出現在一個模塊中釋放了某個內存塊（如C語言指
+
+
+針），而另一模塊在隨後的某個時刻又使用了它。要防止這種情況發生。
+&sup1;  9-5：過程/函數中分配的內存，在過程/函數退出之前要釋放。
+&sup1;  9-6：過程/函數中申請的（為打開文件而使用的）文件句柄，在過程/函數退出之
+
+
+前要關閉。
+說明：分配的內存不釋放以及文件句柄不關閉，是較常見的錯誤，而且稍不注意就有可能
+
+
+發生。這類錯誤往往會引起很嚴重後果，且難以定位。
+示例：下函數在退出之前，沒有把分配的內存釋放。
+typedef unsigned char BYTE;
+
+int example_fun( BYTE gt_len, BYTE *gt_code )
+{
+    BYTE *gt_buf;
+
+    gt_buf = (BYTE *) malloc (MAX_GT_LENGTH);
+    ...  //program code, include check gt_buf if or not NULL.
+    
+    /* global title length error */
+    if (gt_len > MAX_GT_LENGTH)
+    {
+        return GT_LENGTH_ERROR; // 忘了釋放gt_buf
+    }
+    
+    ...  // other program code
+}
+
+應改為如下。
+int example_fun( BYTE gt_len, BYTE *gt_code )
+{
+    BYTE *gt_buf;
+
+    gt_buf = (BYTE * ) malloc ( MAX_GT_LENGTH );
+    ...  // program code, include check gt_buf if or not NULL.
+    
+    /* global title length error */
+    if (gt_len > MAX_GT_LENGTH)
+    {
+        free( gt_buf  ); // 退出之前釋放gt_buf
+        return GT_LENGTH_ERROR;  
+    }
+    
+    ...  // other program code
+}
+&sup1;  9-7：防止內存操作越界。
+說明：內存操作主要是指對數組、指針、內存地址等的操作。內存操作越界是軟件系統主
+
+
+要錯誤之一，後果往往非常嚴重，所以當我們進行這些操作時一定要仔細小心。
+示例：假設某軟件系統最多可由10個用戶同時使用，用戶號為1-10，那麼如下程序存在問
+
+
+題。
+#define MAX_USR_NUM 10
+unsigned char usr_login_flg[MAX_USR_NUM]= "";
+
+void set_usr_login_flg( unsigned char usr_no )
+{
+    if (!usr_login_flg[usr_no])
+    {
+        usr_login_flg[usr_no]= TRUE;
+    }
+}
+
+當usr_no為10時，將使用usr_login_flg越界。可採用如下方式解決。
+void set_usr_login_flg( unsigned char usr_no )
+{
+    if (!usr_login_flg[usr_no - 1])
+    {
+        usr_login_flg[usr_no - 1]= TRUE;
+    }
+}
+&sup1;  9-8：認真處理程序所能遇到的各種出錯情況。
+&sup1;  9-9：系統運行之初，要初始化有關變量及運行環境，防止未經初始化的變量被引
+
+
+用。
+&sup1;  9-10：系統運行之初，要對加載到系統中的數據進行一致性檢查。
+說明：使用不一致的數據，容易使系統進入混亂狀態和不可知狀態。
+&sup1;  9-11：嚴禁隨意更改其它模塊或系統的有關設置和配置。
+說明：編程時，不能隨心所欲地更改不屬於自己模塊的有關設置如常量、數組的大小等。
+
+
+
+&sup1;  9-12：不能隨意改變與其它模塊的接口。
+&sup1;  9-13：充分了解系統的接口之後，再使用系統提供的功能。
+示例：在B型機的各模塊與操作系統的接口函數中，有一個要由各模塊負責編寫的初始化過
+
+
+程，此過程在軟件系統加載完成後，由操作系統發送的初始化消息來調度。因此就涉及到
+
+
+初始化消息的類型與消息發送的順序問題，特別是消息順序，若沒搞清楚就開始編程，很
+
+
+容易引起嚴重後果。以下示例引自B型曾出現過的實際代碼，其中使用了FID_FETCH_DATA與
+
+
+FID_INITIAL初始化消息類型，注意B型機的系統是在FID_FETCH_DATA之前發送FID_INITIA
+
+
+L的。
+
+MID alarm_module_list[MAX_ALARM_MID];
+
+int FAR SYS_ALARM_proc( FID function_id, int handle )
+{
+    _UI i, j;
+
+    switch ( function_id )
+    {
+        ... // program code
+    
+        case FID_INITAIL:
+            for (i = 0; i < MAX_ALARM_MID; i++)
+            {
+                if (alarm_module_list[i]== BAM_MODULE // **）
+                   || (alarm_module_list[i]== LOCAL_MODULE)
+                {
+
+                    for (j = 0; j < ALARM_CLASS_SUM; j++)
+                    {
+                        FAR_MALLOC( ... );
+                    }
+                }
+            }
+
+            ... // program code
+
+            break;
+    
+        case FID_FETCH_DATA:
+
+            ... // program code
+
+            Get_Alarm_Module( );  // 初始化alarm_module_list
+
+            break;
+    
+        ... // program code
+    }
+}
+
+由於FID_INITIAL是在FID_FETCH_DATA之前執行的，而初始化alarm_module_list是在FID_
+
+
+FETCH_DATA中進行的，故在FID_INITIAL中（**）處引用alarm_module_list變量時，它還
+
+
+沒有被初始化。這是個嚴重錯誤。
+應如下改正：要麼把Get_Alarm_Module函數放在FID_INITIAL中（**）之前；要麼就必須考
+
+
+慮（**）處的判斷語句是否可以用（不使用alarm_module_list變量的）其它方式替代，或
+
+
+者是否可以取消此判斷語句。
+&sup1;  9-14：編程時，要防止差1錯誤。
+說明：此類錯誤一般是由於把“<=”誤寫成“<”或“>=”誤寫成“>”等造成的，由此引
+
+
+起的後果，很多情況下是很嚴重的，所以編程時，一定要在這些地方小心。當編完程序後
+
+
+，應對這些操作符進行徹底檢查。
+&sup1;  9-15：要時刻注意易混淆的操作符。當編完程序後，應從頭至尾檢查一遍這些操作
+
+
+符，以防止拼寫錯誤。
+說明：形式相近的操作符最容易引起誤用，如C/C++中的“=”與“==”、“|”與“||”、
+
+
+“&”與“&&”等，若拼寫錯了，編譯器不一定能夠檢查出來。
+示例：如把“&”寫成“&&”，或反之。
+ret_flg = (pmsg->ret_flg & RETURN_MASK);  
+被寫為：
+ret_flg = (pmsg->ret_flg && RETURN_MASK);
+
+rpt_flg = (VALID_TASK_NO( taskno ) && DATA_NOT_ZERO( stat_data ));
+被寫為：
+rpt_flg = (VALID_TASK_NO( taskno ) & DATA_NOT_ZERO( stat_data ));
+&sup1;  9-16：有可能的話，if語句儘量加上else分支，對沒有else分支的語句要小心對待
+
+
+；switch語句必須有default分支。
+&sup1;  9-17：Unix下，多線程的中的子線程退出必需採用主動退出方式，即子線程應ret
+
+
+urn出口。
+&sup1;  9-18：不要濫用goto語句。
+說明：goto語句會破壞程序的結構性，所以除非確實需要，最好不使用goto語句。
+&frac12;    9-1：不使用與硬件或操作系統關係很大的語句，而使用建議的標準語句，以提
+
+
+高軟件的可移植性和可重用性。
+&frac12;    9-2：除非為了滿足特殊需求，避免使用嵌入式彙編。
+說明：程序中嵌入式彙編，一般都對可移植性有較大的影響。
+&frac12;    9-3：精心地構造、劃分子模塊，並按“接口”部分及“內核”部分合理地組織
+
+
+子模塊，以提高“內核”部分的可移植性和可重用性。
+說明：對不同產品中的某個功能相同的模塊，若能做到其內核部分完全或基本一致，那麼
+
+
+無論對產品的測試、維護，還是對以後產品的升級都會有很大幫助。
+&frac12;    9-4：精心構造算法，並對其性能、效率進行測試。
+&frac12;    9-5：對較關鍵的算法最好使用其它算法來確認。
+&frac12;    9-6：時刻注意表達式是否會上溢、下溢。
+示例：如下程序將造成變量下溢。
+unsigned char size ;
+while (size-- >= 0) // 將出現下溢
+{
+    ... // program code
+}
+
+當size等於0時，再減1不會小於0，而是0xFF，故程序是一個死循環。應如下修改。
+char size; // 從unsigned char 改為char
+while (size-- >= 0)
+{
+    ... // program code
+}
+&frac12;    9-7：使用變量時要注意其邊界值的情況。
+示例：如C語言中字符型變量，有效值範圍為-128到127。故以下表達式的計算存在一定風
+
+
+險。
+char chr = 127;
+int sum = 200;
+
+chr += 1; // 127為chr的邊界值，再加1將使chr上溢到-128，而不是128。
+sum += chr; // 故sum的結果不是328，而是72。
+
+若chr與sum為同一種類型，或表達式按如下方式書寫，可能會好些。
+sum = sum + chr + 1; 
+&frac12;    9-8：留心程序機器碼大小（如指令空間大小、數據空間大小、堆棧空間大小等
+
+
+）是否超出系統有關限制。
+&frac12;    9-9：為用戶提供良好的接口界面，使用戶能較充分地瞭解系統內部運行狀態及
+
+
+有關係統出錯情況。
+&frac12;    9-10：系統應具有一定的容錯能力，對一些錯誤事件（如用戶誤操作等）能進行
+
+
+自動補救。
+&frac12;    9-11：對一些具有危險性的操作代碼（如寫硬盤、刪數據等）要仔細考慮，防止
+
+
+對數據、硬件等的安全構成危害，以提高系統的安全性。
+&frac12;    9-12：使用第三方提供的軟件開發工具包或控件時，要注意以下幾點：
+（1）充分了解應用接口、使用環境及使用時注意事項。
+（2）不能過分相信其正確性。
+（3）除非必要，不要使用不熟悉的第三方工具包與控件。
+說明：使用工具包與控件，可加快程序開發速度，節省時間，但使用之前一定對它有較充
+
+
+分的瞭解，同時第三方工具包與控件也有可能存在問題。
+&frac12;    9-13：資源文件（多語言版本支持），如果資源是對語言敏感的，應讓該資源與
+
+
+源代碼文件脫離，具體方法有下面幾種：使用單獨的資源文件、DLL文件或其它單獨的描述
+
+
+文件（如數據庫格式） 
+10 代碼編輯、編譯、審查
+&sup1;  10-1：打開編譯器的所有告警開關對程序進行編譯。
+&sup1;  10-2：在產品軟件（項目組）中，要統一編譯開關選項。
+&sup1;  10-3：通過代碼走讀及審查方式對代碼進行檢查。
+說明：代碼走讀主要是對程序的編程風格如註釋、命名等以及編程時易出錯的內容進行檢
+
+
+查，可由開發人員自己或開發人員交叉的方式進行；代碼審查主要是對程序實現的功能及
+
+
+程序的穩定性、安全性、可靠性等進行檢查及評審，可通過自審、交叉審核或指定部門抽
+
+
+查等方式進行。
+&sup1;  10-4：測試部測試產品之前，應對代碼進行抽查及評審。
+&frac12;    10-1：編寫代碼時要注意隨時保存，並定期備份，防止由於斷電、硬盤損壞等原
+
+
+因造成代碼丟失。
+&frac12;    10-2：同產品軟件（項目組）內，最好使用相同的編輯器，並使用相同的設置選
+
+
+項。
+說明：同一項目組最好採用相同的智能語言編輯器，如Muiti Editor，Visual Editor等，
+
+
+並設計、使用一套縮進宏及註釋宏等，將縮進等問題交由編輯器處理。
+&frac12;    10-3：要小心地使用編輯器提供的塊拷貝功能編程。
+說明：當某段代碼與另一段代碼的處理功能相似時，許多開發人員都用編輯器提供的塊拷
+
+
+貝功能來完成這段代碼的編寫。由於程序功能相近，故所使用的變量、採用的表達式等在
+
+
+功能及命名上可能都很相近，所以使用塊拷貝時要注意，除了修改相應的程序外，一定要
+
+
+把使用的每個變量仔細查看一遍，以改成正確的。不應指望編譯器能查出所有這種錯誤，
+
+
+比如當使用的是全局變量時，就有可能使某種錯誤隱藏下來。
+&frac12;    10-4：合理地設計軟件系統目錄，方便開發人員使用。
+說明：方便、合理的軟件系統目錄，可提高工作效率。目錄構造的原則是方便有關源程序
+
+
+的存儲、查詢、編譯、鏈接等工作，同時目錄中還應具有工作目錄----所有的編譯、鏈接
+
+
+等工作應在此目錄中進行，工具目錄----有關文件編輯器、文件查找等工具可存放在此目
+
+
+錄中。
+&frac12;    10-5：某些語句經編譯後產生告警，但如果你認為它是正確的，那麼應通過某種
+
+
+手段去掉告警信息。
+說明：在Borland C/C++中，可用“#pragma  warn”來關掉或打開某些告警。
+示例：
+#pragma warn -rvl // 關閉告警
+int examples_fun( void )
+{
+      // 程序，但無return語句。
+}
+#pragma warn +rvl // 打開告警
+編譯函數examples_fun時本應產生“函數應有返回值”告警，但由於關掉了此告警信息顯
+
+
+示，所以編譯時將不會產生此告警提示。
+&frac12;    10-6：使用代碼檢查工具（如C語言用PC-Lint）對源程序檢查。
+&frac12;    10-7：使用軟件工具（如 LogiSCOPE）進行代碼審查。 
+11 代碼測試、維護
+&sup1;  11-1：單元測試要求至少達到語句覆蓋。
+&sup1;  11-2：單元測試開始要跟蹤每一條語句，並觀察數據流及變量的變化。
+&sup1;  11-3：清理、整理或優化後的代碼要經過審查及測試。
+&sup1;  11-4：代碼版本升級要經過嚴格測試。
+&sup1;  11-5：使用工具軟件對代碼版本進行維護。
+&sup1;  11-6：正式版本上軟件的任何修改都應有詳細的文檔記錄。
+&frac12;    11-1：發現錯誤立即修改，並且要記錄下來。
+&frac12;    11-2：關鍵的代碼在彙編級跟蹤。
+&frac12;    11-3：仔細設計並分析測試用例，使測試用例覆蓋儘可能多的情況，以提高測試
+
+
+用例的效率。
+&frac12;    11-4：儘可能模擬出程序的各種出錯情況，對出錯處理代碼進行充分的測試。
+
+
+
+&frac12;    11-5：仔細測試代碼處理數據、變量的邊界情況。
+&frac12;    11-6：保留測試信息，以便分析、總結經驗及進行更充分的測試。
+&frac12;    11-7：不應通過“試”來解決問題，應尋找問題的根本原因。
+&frac12;    11-8：對自動消失的錯誤進行分析，搞清楚錯誤是如何消失的。
+&frac12;    11-9：修改錯誤不僅要治表，更要治本。
+&frac12;    11-10：測試時應設法使很少發生的事件經常發生。
+&frac12;    11-11：明確模塊或函數處理哪些事件，並使它們經常發生。
+&frac12;    11-12： 堅持在編碼階段就對代碼進行徹底的單元測試，不要等以後的測試工作
+
+
+來發現問題。
+&frac12;    11-13：去除代碼運行的隨機性（如去掉無用的數據、代碼及儘可能防止並注意
+
+
+函數中的“內部寄存器”等），讓函數運行的結果可預測，並使出現的錯誤可再現。
+ 
+12 宏
+&sup1;  12-1：用宏定義表達式時，要使用完備的括號。
+示例：如下定義的宏都存在一定的風險。
+#define RECTANGLE_AREA( a, b ) a * b
+#define RECTANGLE_AREA( a, b ) (a * b)
+#define RECTANGLE_AREA( a, b ) (a) * (b)
+正確的定義應為：
+#define RECTANGLE_AREA( a, b ) ((a) * (b))
+&sup1;  12-2:將宏所定義的多條表達式放在大括號中。
+示例：下面的語句只有宏的第一條表達式被執行。為了說明問題，for語句的書寫稍不符規
+
+
+範。
+#define INTI_RECT_VALUE( a, b )\
+    a = 0;\
+    b = 0;
+
+for (index = 0; index < RECT_TOTAL_NUM; index++)
+    INTI_RECT_VALUE( rect.a, rect.b );
+
+正確的用法應為：
+#define INTI_RECT_VALUE( a, b )\
+{\
+    a = 0;\
+    b = 0;\
+}
+
+for (index = 0; index < RECT_TOTAL_NUM; index++)
+{ 
+   INTI_RECT_VALUE( rect[index].a, rect[index].b );
+}
+&sup1;  12-3:使用宏時，不允許參數發生變化。
+示例：如下用法可能導致錯誤。
+#define SQUARE( a ) ((a) * (a))
+
+int a = 5;
+int b;
+b = SQUARE( a++ ); // 結果：a = 7，即執行了兩次增1。
+
+正確的用法是：
+b = SQUARE( a );
+a++; // 結果：a = 6，即只執行了一次增1。
+_
+
+
+
+--
+※ 來源:·日月光華 bbs.fudan.edu.cn·HTTP [FROM: 10.11.12.192]
+
+--
+※ 來源:·日月光華 bbs.fudan.edu.cn·HTTP [FROM: 10.11.12.192]
+※ 修改:·huahero 於 03月11日10:59:37 修改本文·[FROM: 10.85.7.77]
+--
+※ 轉載:·日月光華 bbs.fudan.edu.cn·[FROM: 10.100.131.108]
+
+ 
+
+--------------------------------------------------------------------------------
+[返回上一頁] [本討論區]

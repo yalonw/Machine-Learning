@@ -1,0 +1,332 @@
+日月光華 -- Programming精華區文章閱讀
+--------------------------------------------------------------------------------
+ 發信人: freshbird (真菜鳥~快樂的愚人), 信區: Programming
+標  題: 學習Linux網絡編程(2) 
+發信站: 日月光華站 (Mon Apr  2 16:53:51 2001) , 站內信件
+
+學習Linux網絡編程(2)
+3. 服務器和客戶機的信息函數
+這一章我們來學習轉換和網絡方面的信息函數.
+3.1 字節轉換函數
+在網絡上面有著許多類型的機器,這些機器在表示數據的字節順序是不同的, 比如i386芯
+片是低字節在內存地址的低端,高字節在高端,而alpha芯片卻相反. 為了統一起來,在Li
+nux下面,有專門的字節轉換函數.
+unsigned long int htonl(unsigned long int hostlong)
+unsigned short int htons(unisgned short int hostshort)
+unsigned long int ntohl(unsigned long int netlong)
+unsigned short int ntohs(unsigned short int netshort)
+在這四個轉換函數中,h 代表host, n 代表 network.s 代表short l 代表long 第一個函
+數的意義是將本機器上的long數據轉化為網絡上的long. 其他幾個函數的意義也差不多
+.
+3.2 IP和域名的轉換
+在網絡上標誌一臺機器可以用IP或者是用域名.那麼我們怎麼去進行轉換呢?
+struct hostent *gethostbyname(const char *hostname)
+struct hostent *gethostbyaddr(const char *addr,int len,int type)
+在中有struct hostent的定義
+struct hostent{
+char *h_name; /* 主機的正式名稱 */
+char *h_aliases; /* 主機的別名 */
+int h_addrtype; /* 主機的地址類型 AF_INET*/
+int h_length; /* 主機的地址長度 對於IP4 是4字節32位*/
+char **h_addr_list; /* 主機的IP地址列表 */
+}
+#define h_addr h_addr_list[0] /* 主機的第一個IP地址*/
+gethostbyname可以將機器名(如 linux.yessun.com)轉換為一個結構指針.在這個結構裡
+面儲存了域名的信息
+gethostbyaddr可以將一個32位的IP地址(C0A80001)轉換為結構指針.
+這兩個函數失敗時返回NULL 且設置h_errno錯誤變量,調用h_strerror()可以得到詳細的
+出錯信息
+3.3 字符串的IP和32位的IP轉換.
+在網絡上面我們用的IP都是數字加點(192.168.0.1)構成的, 而在struct in_addr結構中
+用的是32位的IP, 我們上面那個32位IP(C0A80001)是的192.168.0.1 為了轉換我們可以
+使用下面兩個函數
+int inet_aton(const char *cp,struct in_addr *inp)
+char *inet_ntoa(struct in_addr in)
+函數裡面 a 代表 ascii n 代表network.第一個函數表示將a.b.c.d的IP轉換為32位的I
+P,存儲在 inp指針裡面.第二個是將32位IP轉換為a.b.c.d的格式.
+3.4 服務信息函數
+在網絡程序裡面我們有時候需要知道端口.IP和服務信息.這個時候我們可以使用以下幾
+個函數
+int getsockname(int sockfd,struct sockaddr *localaddr,int *addrlen)
+int getpeername(int sockfd,struct sockaddr *peeraddr, int *addrlen)
+struct servent *getservbyname(const char *servname,const char *protoname)
+struct servent *getservbyport(int port,const char *protoname)
+struct servent
+{
+char *s_name; /* 正式服務名 */
+char **s_aliases; /* 別名列表 */
+int s_port; /* 端口號 */
+char *s_proto; /* 使用的協議 */
+}
+一般我們很少用這幾個函數.對應客戶端,當我們要得到連接的端口號時在connect調用成
+功後使用可得到 系統分配的端口號.對於服務端,我們用INADDR_ANY填充後,為了得到連
+接的IP我們可以在accept調用成功後 使用而得到IP地址.
+在網絡上有許多的默認端口和服務,比如端口21對ftp80對應WWW.為了得到指定的端口號
+的服務 我們可以調用第四個函數,相反為了得到端口號可以調用第三個函數.
+3.5 一個例子
+#include
+#include
+#include
+#include
+#include
+int main(int argc ,char **argv)
+{
+struct sockaddr_in addr;
+struct hostent *host;
+char **alias;
+if(argc<2)
+{
+fprintf(stderr,"Usage:%s hostname|ip..\n\a",argv[0]);
+exit(1);
+}
+argv++;
+for(;*argv!=NULL;argv++)
+{
+/* 這裡我們假設是IP*/
+if(inet_aton(*argv,&addr.sin_addr)!=0)
+{
+host=gethostbyaddr((char *)&addr.sin_addr,4,AF_INET);
+printf("Address information of Ip %s\n",*argv);
+}
+else
+{
+/* 失敗,難道是域名?*/
+host=gethostbyname(*argv); printf("Address information
+of host %s\n",*argv);
+}
+if(host==NULL)
+{
+/* 都不是 ,算了不找了*/
+fprintf(stderr,"No address information of %s\n",*argv);
+continue;
+}
+printf("Official host name %s\n",host->h_name);
+printf("Name aliases:");
+for(alias=host->h_aliases;*alias!=NULL;alias++)
+printf("%s ,",*alias);
+printf("\nIp address:");
+for(alias=host->h_addr_list;*alias!=NULL;alias++)
+printf("%s ,",inet_ntoa(*(struct in_addr *)(*alias)));
+}
+}
+在這個例子裡面,為了判斷用戶輸入的是IP還是域名我們調用了兩個函數,第一次我們假
+設輸入的是IP所以調用inet_aton, 失敗的時候,再調用gethostbyname而得到信息.
+4. 完整的讀寫函數
+一旦我們建立了連接,我們的下一步就是進行通信了.在Linux下面把我們前面建立的通道
+ 看成是文件描述符,這樣服務器端和客戶端進行通信時候,只要往文件描述符裡面讀寫東
+西了. 就象我們往文件讀寫一樣.
+4.1 寫函數write
+ssize_t write(int fd,const void *buf,size_t nbytes)
+write函數將buf中的nbytes字節內容寫入文件描述符fd.成功時返回寫的字節數.失敗時
+返回-1. 並設置errno變量. 在網絡程序中,當我們向套接字文件描述符寫時有倆種可能
+.
+1)write的返回值大於0,表示寫了部分或者是全部的數據.
+2)返回的值小於0,此時出現了錯誤.我們要根據錯誤類型來處理.
+如果錯誤為EINTR表示在寫的時候出現了中斷錯誤.
+如果為EPIPE表示網絡連接出現了問題(對方已經關閉了連接).
+為了處理以上的情況,我們自己編寫一個寫函數來處理這幾種情況.
+int my_write(int fd,void *buffer,int length)
+{
+int bytes_left;
+int written_bytes;
+char *ptr;
+ptr=buffer;
+bytes_left=length;
+while(bytes_left>0)
+{
+/* 開始寫*/
+written_bytes=write(fd,ptr,bytes_left);
+if(written_bytes<=0) /* 出錯了*/
+{
+if(errno==EINTR) /* 中斷錯誤 我們繼續寫*/
+written_bytes=0;
+else /* 其他錯誤 沒有辦法,只好撤退了*/
+return(-1);
+}
+bytes_left-=written_bytes;
+ptr+=written_bytes; /* 從剩下的地方繼續寫 */
+}
+return(0);
+}
+4.2 讀函數read
+ssize_t read(int fd,void *buf,size_t nbyte) read函數是負責從fd中讀取內容.當讀
+成功時,read返回實際所讀的字節數,如果返回的值是0 表示已經讀到文件的結束了,小於
+0表示出現了錯誤.如果錯誤為EINTR說明讀是由中斷引起的, 如果是ECONNREST表示網絡
+連接出了問題. 和上面一樣,我們也寫一個自己的讀函數.
+int my_read(int fd,void *buffer,int length)
+{
+int bytes_left;
+int bytes_read;
+char *ptr;
+bytes_left=length;
+while(bytes_left>0)
+{
+bytes_read=read(fd,ptr,bytes_read);
+if(bytes_read<0)
+{
+if(errno==EINTR)
+bytes_read=0;
+else
+return(-1);
+}
+else if(bytes_read==0)
+break;
+bytes_left-=bytes_read;
+ptr+=bytes_read;
+}
+return(length-bytes_left);
+}
+4.3 數據的傳遞
+有了上面的兩個函數,我們就可以向客戶端或者是服務端傳遞數據了.比如我們要傳遞一
+個結構.可以使用如下方式
+/* 客戶端向服務端寫 */
+struct my_struct my_struct_client;
+write(fd,(void *)&my_struct_client,sizeof(struct my_struct);
+/* 服務端的讀*/
+char buffer[sizeof(struct my_struct)];
+struct *my_struct_server;
+read(fd,(void *)buffer,sizeof(struct my_struct));
+my_struct_server=(struct my_struct *)buffer;
+在網絡上傳遞數據時我們一般都是把數據轉化為char類型的數據傳遞.接收的時候也是一
+樣的 注意的是我們沒有必要在網絡上傳遞指針(因為傳遞指針是沒有任何意義的,我們必
+須傳遞指針所指向的內容)
+5. 用戶數據報發送
+我們前面已經學習網絡程序的一個很大的部分,由這個部分的知識,我們實際上可以寫出
+大部分的基於TCP協議的網絡程序了.現在在Linux下的大部分程序都是用我們上面所學的
+知識來寫的.我們可以去找一些源程序來參考一下.這一章,我們簡單的學習一下基於UDP
+協議的網絡程序.
+5.1 兩個常用的函數
+int recvfrom(int sockfd,void *buf,int len,unsigned int flags,struct sockaddr
+ * from int *fromlen)
+int sendto(int sockfd,const void *msg,int len,unsigned int flags,struct sock
+addr *to int tolen)
+sockfd,buf,len的意義和read,write一樣,分別表示套接字描述符,發送或接收的緩衝區
+及大小.recvfrom負責從sockfd接收數據,如果from不是NULL,那麼在from裡面存儲了信息
+來源的情況,如果對信息的來源不感興趣,可以將from和fromlen設置為NULL.sendto負責
+向to發送信息.此時在to裡面存儲了收信息方的詳細資料.
+5.2 一個實例
+/* 服務端程序 server.c */
+#include
+#include
+#include
+#include
+#include
+#define SERVER_PORT 8888
+#define MAX_MSG_SIZE 1024
+void udps_respon(int sockfd)
+{
+struct sockaddr_in addr;
+int addrlen,n;
+char msg[MAX_MSG_SIZE];
+while(1)
+{ /* 從網絡上度,寫到網絡上面去 */
+n=recvfrom(sockfd,msg,MAX_MSG_SIZE,0,
+(struct sockaddr*)&addr,&addrlen);
+msg[n]=0;
+/* 顯示服務端已經收到了信息 */
+fprintf(stdout,"I have received %s",msg);
+sendto(sockfd,msg,n,0,(struct sockaddr*)&addr,addrlen);
+}
+}
+int main(void)
+{
+int sockfd;
+struct sockaddr_in addr;
+sockfd=socket(AF_INET,SOCK_DGRAM,0);
+if(sockfd<0)
+{
+fprintf(stderr,"Socket Error:%s\n",strerror(errno));
+exit(1);
+}
+bzero(&addr,sizeof(struct sockaddr_in));
+addr.sin_family=AF_INET;
+addr.sin_addr.s_addr=htonl(INADDR_ANY);
+addr.sin_port=htons(SERVER_PORT);
+if(bind(sockfd,(struct sockaddr *)&ddr,sizeof(struct sockaddr_in))<0)
+{
+fprintf(stderr,"Bind Error:%s\n",strerror(errno));
+exit(1);
+}
+udps_respon(sockfd);
+close(sockfd);
+}
+/* 客戶端程序 */
+#include
+#include
+#include
+#include
+#include
+#include
+#define MAX_BUF_SIZE 1024
+void udpc_requ(int sockfd,const struct sockaddr_in *addr,int len)
+{
+char buffer[MAX_BUF_SIZE];
+int n;
+while(1)
+{ /* 從鍵盤讀入,寫到服務端 */
+fgets(buffer,MAX_BUF_SIZE,stdin);
+sendto(sockfd,buffer,strlen(buffer),0,addr,len);
+bzero(buffer,MAX_BUF_SIZE);
+/* 從網絡上讀,寫到屏幕上 */
+n=recvfrom(sockfd,buffer,MAX_BUF_SIZE,0,NULL,NULL);
+buffer[n]=0;
+fputs(buffer,stdout);
+}
+}
+int main(int argc,char **argv)
+{
+int sockfd,port;
+struct sockaddr_in addr;
+if(argc!=3)
+{
+fprintf(stderr,"Usage:%s server_ip server_port\n",argv[0]);
+exit(1);
+}
+if((port=atoi(argv[2]))<0)
+{
+fprintf(stderr,"Usage:%s server_ip server_port\n",argv[0]);
+exit(1);
+}
+sockfd=socket(AF_INET,SOCK_DGRAM,0);
+if(sockfd<0)
+{
+fprintf(stderr,"Socket Error:%s\n",strerror(errno));
+exit(1);
+}
+/* 填充服務端的資料 */
+bzero(&addr,sizeof(struct sockaddr_in));
+addr.sin_family=AF_INET;
+addr.sin_port=htons(port);
+if(inet_aton(argv[1],&addr.sin_addr)<0)
+{
+fprintf(stderr,"Ip error:%s\n",strerror(errno));
+exit(1);
+}
+udpc_requ(sockfd,&addr,sizeof(struct sockaddr_in));
+close(sockfd);
+}
+########### 編譯文件 Makefile ##########
+all:server client
+server:server.c
+gcc -o server server.c
+client:client.c
+gcc -o client client.c
+clean:
+rm -f server
+rm -f client
+rm -f core
+上面的實例如果大家編譯運行的話,會發現一個小問題的. 在我機器上面,我先運行服務
+端,然後運行客戶端.在客戶端輸入信息,發送到服務端, 在服務端顯示已經收到信息,但
+是客戶端沒有反映.再運行一個客戶端,向服務端發出信息 卻可以得到反應.我想可能是
+第一個客戶端已經阻塞了.如果誰知道怎麼解決的話,請告訴我,謝謝. 由於UDP協議是不
+保證可靠接收數據的要求,所以我們在發送信息的時候,系統並不能夠保證我們發出的信
+息都正確無誤的到達目的地.一般的來說我們在編寫網絡程序的時候都是選用TCP協議的
+. 
+
+--
+※ 來源:·日月光華站 bbs.fudan.edu.cn·[FROM: 202.119.32.102]
+
+ 
+
+--------------------------------------------------------------------------------
+[返回上一頁] [本討論區]

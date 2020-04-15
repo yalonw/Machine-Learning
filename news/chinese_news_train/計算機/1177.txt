@@ -1,0 +1,84 @@
+日月光華 -- Unix精華區文章閱讀
+--------------------------------------------------------------------------------
+ 發信人: monkey (cowboy), 信區: Unix
+標  題: java在Linux下的web應用(二)
+發信站: 日月光華站 (Wed Oct 11 22:19:49 2000) , 轉信
+
+java在Linux下的web應用(二)
+gnujsp1.0.0在RedHat下基於apache jserv的安裝
+首先確認你已經安裝了apache jserv，如果你還沒有安裝apache jserv,請參考在《Red
+Hat下
+安裝apache jserv 1.1.2》一文。
+默認jserv安裝在/usr/local/jserv下，jserv.conf在/usr/local/jserv/conf下
+一、需要的軟件
+從http://www.klomp.org/gnujsp/取得gnujsp-1.0.0.tar.gz
+二、
+#cp gnujsp-1.0.0.tar.gz /usr/local
+#tar xvzf gnujsp-1.0.0.tar.gz
+#ln -s gnujsp-1.0.0 gnujsp
+#cd /usr/local/jserv/etc
+#cp zone.properties alph.properties
+#vi alph.properties修改alph.properties加入：
+# List of Repositories
+#######################
+repositories=/usr/local/gnujsp-1.0.0/lib/gnujsp10.jar
+repositories=/usr/local/gnujsp-1.0.0/lib/servlet-2.0-plus.jar
+repositories=/your/jdbcbeans/path#你的javabean的路徑
+#repositories=/home/heyl/lib/java/Acme.jar
+#repositories=/usr/local/webl-3.0/lib/WebL.jar
+# Classloader parameters
+#########################
+autoreload.classes=true
+# Enable servlet resourced autoreloading (properties and other
+# loaded resources)
+autoreload.file=true
+...
+# Servlet Aliases
+##################
+# Note: if using webl or Acme stuff, add the jars here too
+# if you added them to the repositories above (alph)
+# In my real settings I added: usepackages=true,language=de,country=de
+# but I guess you may prefer the default locale :-) (alph)
+servlet.gnujsp.code=org.gjt.jsp.JspServlet
+servlet.gnujsp.initArgs=checkclass=true,pagebase=/usr/local/www/doc,
+scratchdir=/var/local/apache/jsp,debug=true,compiler=builtin-javac
+-classpath %classpath%:%scratchdir%:/usr/local/gnujsp-1.0.0/lib/servlet-2.0-
+plus.jar:
+/usr/local/gnujsp-1.0.0/lib/gnujsp10.jar:/your/jdbcbeans/path
+-d %scratchdir% -deprecation %source%
+#其中$scratchdir為jsp文件生成的java和class文件的目錄
+存盤
+三、
+#vi jserv.properties加入
+wrapper.classpath=/usr/lib/jdk/lib/tools.zip
+wrapper.classpath=/usr/local/jserv/lib/ApacheJServ.jar
+wrapper.classpath=/usr/local/JSDK/lib/jsdk.jar
+......
+zones=root,alph
+......
+alph.properties=/usr/local/apache-1.3.6/conf/alph.properties
+......
+log.file=/usr/local/apache/logs/jserv.log#日誌文件
+四、在/usr/local/jserv/etc/jserv.conf中加進
+ApJServMount /alph /alph
+Action jsp-handler /servlet/gnujsp
+AddHandler jsp-handler jsp
+五、
+啟動你的apache
+把/usr/local/gnujsp/examples下的文件拷貝到web發佈目錄下，用瀏覽器調用
+http://yourserver/dir/date.jsp
+http://yourserver/dir/hello.jap
+http://yourserver/dir/snoop.jsp
+怎麼樣，結果出來了沒有呢？
+然後你自己改動這些文件，加入中文測試，和servlet在redhat下一樣，測試表明gnujs
+p也
+沒有中文顯示的問題。
+相關servlet/jsp信息請到java.sun.com查閱相關信息
+
+--
+※ 來源:·日月光華站 bbs.fudan.edu.cn·[FROM: 61.129.222.52]
+
+ 
+
+--------------------------------------------------------------------------------
+[返回上一頁] [本討論區]

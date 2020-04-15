@@ -1,0 +1,263 @@
+日月光華 -- Programming精華區文章閱讀
+--------------------------------------------------------------------------------
+ 發信人: freshbird (真菜鳥~快樂的愚人), 信區: Programming
+標  題: 學習Linux網絡編程(1) 
+發信站: 日月光華站 (Mon Apr  2 16:53:34 2001) , 站內信件
+
+學習Linux網絡編程(1)
+Linux系統的一個主要特點是他的網絡功能非常強大。隨著網絡的日益普及，基於網絡的
+應用也將越來越多。 在這個網絡時代，掌握了Linux的網絡編程技術，將令每一個人處
+於不敗之地，學習Linux的網絡編程，可以讓我們真正的體會到網絡的魅力。 想成為一
+位真正的hacker，必須掌握網絡編程技術。
+現在書店裡面已經有了許多關於Linux網絡編程方面的書籍，網絡上也有了許多關於網絡
+編程方面的教材，大家都可以 去看一看的。在這裡我會和大家一起來領會Linux網絡編
+程的奧妙，由於我學習Linux的網絡編程也開始不久，所以我下面所說的肯定會有錯誤的
+， 還請大家指點出來，在這裡我先謝謝大家了。
+在這一個章節裡面，我會和以前的幾個章節不同，在前面我都是概括的說了一下， 從現
+在開始我會儘可能的詳細的說明每一個函數及其用法。好了讓我們去領會Linux的偉大的
+魅力吧！
+1. Linux網絡知識介紹
+1.1 客戶端程序和服務端程序
+網絡程序和普通的程序有一個最大的區別是網絡程序是由兩個部分組成的--客戶端和服
+務器端.
+網絡程序是先有服務器程序啟動,等待客戶端的程序運行並建立連接.一般的來說是服務
+端的程序 在一個端口上監聽,直到有一個客戶端的程序發來了請求.
+1.2 常用的命令
+由於網絡程序是有兩個部分組成,所以在調試的時候比較麻煩,為此我們有必要知道一些
+常用的網絡命令
+netstat
+命令netstat是用來顯示網絡的連接,路由表和接口統計等網絡的信息.netstat有許多的
+選項 我們常用的選項是 -an 用來顯示詳細的網絡狀態.至於其它的選項我們可以使用幫
+助手冊獲得詳細的情況.
+telnet
+telnet是一個用來遠程控制的程序,但是我們完全可以用這個程序來調試我們的服務端程
+序的. 比如我們的服務器程序在監聽8888端口,我們可以用telnet localhost 8888來查
+看服務端的狀況.
+1.3 TCP/UDP介紹
+TCP(Transfer Control Protocol)傳輸控制協議是一種面向連接的協議,當我們的網絡程
+序使用 這個協議的時候,網絡可以保證我們的客戶端和服務端的連接是可靠的,安全的.
+
+UDP(User Datagram Protocol)用戶數據報協議是一種非面向連接的協議,這種協議並不
+能保證我們 的網絡程序的連接是可靠的,所以我們現在編寫的程序一般是採用TCP協議的
+.
+2. 初等網絡函數介紹（TCP）
+Linux系統是通過提供套接字(socket)來進行網絡編程的.網絡程序通過socket和其它幾
+個函數的調用,會返回一個 通訊的文件描述符,我們可以將這個描述符看成普通的文件的
+描述符來操作,這就是linux的設備無關性的 好處.我們可以通過向描述符讀寫操作實現
+網絡之間的數據交流.
+2.1 socket
+int socket(int domain, int type,int protocol)
+domain:說明我們網絡程序所在的主機採用的通訊協族(AF_UNIX和AF_INET等). AF_UNIX
+只能夠用於單一的Unix系統進程間通信,而AF_INET是針對Internet的,因而可以允許在遠
+程 主機之間通信(當我們 man socket時發現 domain可選項是 PF_*而不是AF_*,因為gl
+ibc是posix的實現 所以用PF代替了AF,不過我們都可以使用的).
+type:我們網絡程序所採用的通訊協議(SOCK_STREAM,SOCK_DGRAM等) SOCK_STREAM表明我
+們用的是TCP協議,這樣會提供按順序的,可靠,雙向,面向連接的比特流. SOCK_DGRAM 表
+明我們用的是UDP協議,這樣只會提供定長的,不可靠,無連接的通信.
+protocol:由於我們指定了type,所以這個地方我們一般只要用0來代替就可以了 socket
+為網絡通訊做基本的準備.成功時返回文件描述符,失敗時返回-1,看errno可知道出錯的
+詳細情況.
+2.2 bind
+int bind(int sockfd, struct sockaddr *my_addr, int addrlen)
+sockfd:是由socket調用返回的文件描述符.
+addrlen:是sockaddr結構的長度.
+my_addr:是一個指向sockaddr的指針. 在中有 sockaddr的定義
+struct sockaddr{
+unisgned short as_family;
+char sa_data[14];
+};
+不過由於系統的兼容性,我們一般不用這個頭文件,而使用另外一個結構(struct sockad
+dr_in) 來代替.在中有sockaddr_in的定義
+struct sockaddr_in{
+unsigned short sin_family;
+unsigned short int sin_port;
+struct in_addr sin_addr;
+unsigned char sin_zero[8];
+我們主要使用Internet所以sin_family一般為AF_INET,sin_addr設置為INADDR_ANY表示
+可以 和任何的主機通信,sin_port是我們要監聽的端口號.sin_zero[8]是用來填充的.
+bind將本地的端口同socket返回的文件描述符捆綁在一起.成功是返回0,失敗的情況和s
+ocket一樣
+2.3 listen
+int listen(int sockfd,int backlog)
+sockfd:是bind後的文件描述符.
+backlog:設置請求排隊的最大長度.當有多個客戶端程序和服務端相連時, 使用這個表示
+可以介紹的排隊長度. listen函數將bind的文件描述符變為監聽套接字.返回的情況和b
+ind一樣.
+2.4 accept
+int accept(int sockfd, struct sockaddr *addr,int *addrlen)
+sockfd:是listen後的文件描述符.
+addr,addrlen是用來給客戶端的程序填寫的,服務器端只要傳遞指針就可以了. bind,li
+sten和accept是服務器端用的函數,accept調用時,服務器端的程序會一直阻塞到有一個
+ 客戶程序發出了連接. accept成功時返回最後的服務器端的文件描述符,這個時候服務
+器端可以向該描述符寫信息了. 失敗時返回-1
+2.5 connect
+int connect(int sockfd, struct sockaddr * serv_addr,int addrlen)
+sockfd:socket返回的文件描述符.
+serv_addr:儲存了服務器端的連接信息.其中sin_add是服務端的地址
+addrlen:serv_addr的長度
+connect函數是客戶端用來同服務端連接的.成功時返回0,sockfd是同服務端通訊的文件
+描述符 失敗時返回-1.
+2.6 實例
+服務器端程序
+/******* 服務器程序 (server.c) ************/
+#include
+#include
+#include
+#include
+#include
+#include
+#include
+#include
+int main(int argc, char *argv[])
+{
+int sockfd,new_fd;
+struct sockaddr_in server_addr;
+struct sockaddr_in client_addr;
+int sin_size,portnumber;
+char hello[]="Hello! Are You Fine?\n";
+if(argc!=2)
+{
+fprintf(stderr,"Usage:%s portnumber\a\n",argv[0]);
+exit(1);
+}
+if((portnumber=atoi(argv[1]))<0)
+{
+fprintf(stderr,"Usage:%s portnumber\a\n",argv[0]);
+exit(1);
+}
+/* 服務器端開始建立socket描述符 */
+if((sockfd=socket(AF_INET,SOCK_STREAM,0))==-1)
+{
+fprintf(stderr,"Socket error:%s\n\a",strerror(errno));
+exit(1);
+}
+/* 服務器端填充 sockaddr結構 */
+bzero(&server_addr,sizeof(struct sockaddr_in));
+server_addr.sin_family=AF_INET;
+server_addr.sin_addr.s_addr=htonl(INADDR_ANY);
+server_addr.sin_port=htons(portnumber);
+/* 捆綁sockfd描述符 */
+if(bind(sockfd,(struct sockaddr *)(&server_addr),sizeof(struct sockaddr))==-
+1)
+{
+fprintf(stderr,"Bind error:%s\n\a",strerror(errno));
+exit(1);
+}
+/* 監聽sockfd描述符 */
+if(listen(sockfd,5)==-1)
+{
+fprintf(stderr,"Listen error:%s\n\a",strerror(errno));
+exit(1);
+}
+while(1)
+{
+/* 服務器阻塞,直到客戶程序建立連接 */
+sin_size=sizeof(struct sockaddr_in);
+if((new_fd=accept(sockfd,(struct sockaddr *)(&client_addr),&sin_size))==-1)
+{
+fprintf(stderr,"Accept error:%s\n\a",strerror(errno));
+exit(1);
+}
+fprintf(stderr,"Server get connection from %s\n",
+inet_ntoa(client_addr.sin_addr));
+if(write(new_fd,hello,strlen(hello))==-1)
+{
+fprintf(stderr,"Write Error:%s\n",strerror(errno));
+exit(1);
+}
+/* 這個通訊已經結束 */
+close(new_fd);
+/* 循環下一個 */
+}
+close(sockfd);
+exit(0);
+}
+客戶端程序
+/******* 客戶端程序 client.c ************/
+#include
+#include
+#include
+#include
+#include
+#include
+#include
+#include
+int main(int argc, char *argv[])
+{
+int sockfd;
+char buffer[1024];
+struct sockaddr_in server_addr;
+struct hostent *host;
+int portnumber,nbytes;
+if(argc!=3)
+{
+fprintf(stderr,"Usage:%s hostname portnumber\a\n",argv[0]);
+exit(1);
+}
+if((host=gethostbyname(argv[1]))==NULL)
+{
+fprintf(stderr,"Gethostname error\n");
+exit(1);
+}
+if((portnumber=atoi(argv[2]))<0)
+{
+fprintf(stderr,"Usage:%s hostname portnumber\a\n",argv[0]);
+exit(1);
+}
+/* 客戶程序開始建立 sockfd描述符 */
+if((sockfd=socket(AF_INET,SOCK_STREAM,0))==-1)
+{
+fprintf(stderr,"Socket Error:%s\a\n",strerror(errno));
+exit(1);
+}
+/* 客戶程序填充服務端的資料 */
+bzero(&server_addr,sizeof(server_addr));
+server_addr.sin_family=AF_INET;
+server_addr.sin_port=htons(portnumber);
+server_addr.sin_addr=*((struct in_addr *)host->h_addr);
+/* 客戶程序發起連接請求 */
+if(connect(sockfd,(struct sockaddr *)(&server_addr),sizeof(struct sockaddr))
+==-1)
+{
+fprintf(stderr,"Connect Error:%s\a\n",strerror(errno));
+exit(1);
+}
+/* 連接成功了 */
+if((nbytes=read(sockfd,buffer,1024))==-1)
+{
+fprintf(stderr,"Read Error:%s\n",strerror(errno));
+exit(1);
+}
+buffer[nbytes]=\;
+printf("I have received:%s\n",buffer);
+/* 結束通訊 */
+close(sockfd);
+exit(0);
+}
+MakeFile
+這裡我們使用GNU 的make實用程序來編譯. 關於make的詳細說明見 Make 使用介紹
+######### Makefile ###########
+all:server client
+server:server.c
+gcc $^ -o $@
+client:client.c
+gcc $^ -o $@
+運行make後會產生兩個程序server(服務器端)和client(客戶端) 先運行./server port
+number& (portnumber隨便取一個大於1204且不在/etc/services中出現的號碼 就用888
+8好了),然後運行 ./client localhost 8888 看看有什麼結果. (你也可以用telnet和n
+etstat試一試.) 上面是一個最簡單的網絡程序,不過是不是也有點煩.上面有許多函數我
+們還沒有解釋. 我會在下一章進行的詳細的說明.
+2.7 總結
+總的來說網絡程序是由兩個部分組成的--客戶端和服務器端.它們的建立步驟一般是:
+服務器端
+socket-->bind-->listen-->accept
+客戶端
+socket-->connect 
+
+--
+※ 來源:·日月光華站 bbs.fudan.edu.cn·[FROM: 202.119.32.102]
+
+ 
+
+--------------------------------------------------------------------------------
+[返回上一頁] [本討論區]

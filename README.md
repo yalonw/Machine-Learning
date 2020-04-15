@@ -88,14 +88,18 @@
 - 預測類型 predict：
   1. **分類（classification）**：  
      - 有附答案的選擇題（無大小關係），如明天會不會下雨
-     - [`sklearn.tree.DecisionTreeClassifier`](https://github.com/yalonw/Machine_Learning/blob/master/classification.ipynb)
+     - [`sklearn.tree.DecisionTreeClassifier`](https://github.com/yalonw/Machine_Learning/blob/master/classification.ipynb)（數值型資料）
+       - 範例：[iris_classification](https://github.com/yalonw/Machine_Learning/blob/master/classification.ipynb)
      - [`sklearn.naive_bayes.MultinomialNB`](https://github.com/yalonw/Machine_Learning/blob/master/poem_naive_bayes.ipynb)（文字型資料）
+       - 範例一：預測作詩的人 | [poem_naive_bayes](https://github.com/yalonw/Machine_Learning/blob/master/poem_naive_bayes.ipynb)
+       - 範例二：預測新聞類型 | [news_naive_bayes](https://github.com/yalonw/Machine_Learning/blob/master/news_naive_bayes.ipynb)
 
   2. **分群（cluster）**：  
      - 沒附答案的選擇題（無大小關係）
      - [`sklearn.cluster.KMeans`](https://github.com/yalonw/Machine_Learning/blob/master/cluster.ipynb)
+       - 範例：[iris_cluster](https://github.com/yalonw/Machine_Learning/blob/master/cluster.ipynb)
 
   3. **回歸（regression）**：  
      - 必有答案的計算題（有大小關係），如明天降雨機率多少
      - [`sklearn.tree.DecisionTreeRegressor`](https://github.com/yalonw/Machine_Learning/blob/master/regression.ipynb)
-
+       - 範例：[boston_regression](https://github.com/yalonw/Machine_Learning/blob/master/regression.ipynb)
