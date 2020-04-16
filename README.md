@@ -1,4 +1,4 @@
-###### Date: 2020.04.07 
+###### Date: 2020.04.07-17 
 
 # 前情提要
 
@@ -67,39 +67,52 @@
 # ML model 建立步驟
 
 ### Step1: 準備訓練資料 
-- 資料類型 data：
+- 資料類型 Data：
   1. **監　督式學習**（Supervised Learning）：  
-     資料有正確答案，常用演算法為分類、回歸。
+     資料有正確答案，常用演算法為分類（classification）、回歸（regression）。
 
   2. **非監督式學習**（Unsupervised Learning ）：  
-     資料沒正確答案（因資料太多，或不知道該如何填入），常用演算法為分群。
+     資料沒正確答案（因資料太多，或不知道該如何填入），常用演算法為分群（cluster）。
 
   3. **強化學習/半監督式**（Reinforcement Learning）：  
      正確答案是由環境產生/反饋，如自駕車、機器人、遊戲。
 
+- 資料預處理 Data Preprocessing：
+  1. 填補缺失值 Missing Data
+  2. 對類別型特徵做 One-Hot Encoding
+  3. 資料清洗 Data Cleansing
+     - 範例：[titanic_data_preprocessing](https://github.com/yalonw/Machine_Learning/blob/master/titanic_data_preprocessing.ipynb)
+  4. 資料特徵縮放 Feature Scaling：[`sklearn.preprocessing.MinMaxScaler`](https://scikit-learn.org/stable/modules/preprocessing.html)
+     - 範例：[titanic_k-nearest_neighbors](https://github.com/yalonw/Machine_Learning/blob/master/titanic_k-nearest_neighbors.ipynb)
+
+
 ### Step2: 建立訓練模型 
-- 篩選特徵 feature？  
+- 篩選特徵 Feature？  
   - 大多數的演算法會自動決定**特徵重要性**、自動選擇合適的特徵來建立模型；  
     因此，**並不需要**特別去篩選特徵欄位，或刪除可能沒用的特徵欄位。
 
   - 決策樹會自己決定特徵的重要性，而單純貝氏會透過**機率**決定特徵的重要性。
 
 ### Step3: 利用模型預測  
-- 預測類型 predict：
+- 預測類型 Predict：
   1. **分類（classification）**：  
-     - 有附答案的選擇題（無大小關係），如明天會不會下雨
-     - [`sklearn.tree.DecisionTreeClassifier`](https://github.com/yalonw/Machine_Learning/blob/master/classification.ipynb)（數值型資料）
+     - 監督式學習：有附答案的選擇題（無大小關係），如明天會不會下雨
+     - [`sklearn.tree.DecisionTreeClassifier`](https://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeClassifier.html)
        - 範例：[iris_classification](https://github.com/yalonw/Machine_Learning/blob/master/classification.ipynb)
-     - [`sklearn.naive_bayes.MultinomialNB`](https://github.com/yalonw/Machine_Learning/blob/master/poem_naive_bayes.ipynb)（文字型資料）
+     - [`sklearn.naive_bayes.MultinomialNB`](https://scikit-learn.org/stable/modules/generated/sklearn.naive_bayes.MultinomialNB.html)（文字型資料）
        - 範例一：預測作詩的人 | [poem_naive_bayes](https://github.com/yalonw/Machine_Learning/blob/master/poem_naive_bayes.ipynb)
        - 範例二：預測新聞類型 | [news_naive_bayes](https://github.com/yalonw/Machine_Learning/blob/master/news_naive_bayes.ipynb)
+     - [`sklearn.ensemble.RandomForestClassifier`](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html)
+       - 範例：[titanic_randomforest](https://github.com/yalonw/Machine_Learning/blob/master/titanic_randomforest.ipynb)
+     - [`sklearn.neighbors.KNeighborsClassifier`](https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsClassifier.html)
+       - 範例：[titanic_k-nearest_neighbors](https://github.com/yalonw/Machine_Learning/blob/master/titanic_k-nearest_neighbors.ipynb)
 
   2. **分群（cluster）**：  
-     - 沒附答案的選擇題（無大小關係）
-     - [`sklearn.cluster.KMeans`](https://github.com/yalonw/Machine_Learning/blob/master/cluster.ipynb)
+     - 非監督式學習：沒附答案的選擇題（無大小關係）
+     - [`sklearn.cluster.KMeans`](https://scikit-learn.org/stable/modules/generated/sklearn.cluster.KMeans.html)
        - 範例：[iris_cluster](https://github.com/yalonw/Machine_Learning/blob/master/cluster.ipynb)
 
   3. **回歸（regression）**：  
-     - 必有答案的計算題（有大小關係），如明天降雨機率多少
-     - [`sklearn.tree.DecisionTreeRegressor`](https://github.com/yalonw/Machine_Learning/blob/master/regression.ipynb)
+     - 監督式學習：必有答案的計算題（有大小關係），如明天降雨機率多少
+     - [`sklearn.tree.DecisionTreeRegressor`](https://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeRegressor.html)
        - 範例：[boston_regression](https://github.com/yalonw/Machine_Learning/blob/master/regression.ipynb)
