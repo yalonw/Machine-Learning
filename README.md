@@ -97,6 +97,7 @@
 - 預測類型 Predict：
   1. **分類（classification）**：  
      - 監督式學習：有附答案的選擇題（無大小關係），如明天會不會下雨
+     - 選擇**複雜的**演算法可以考慮較多面向，而過擬合的問題會被分散掉
      - [`sklearn.tree.DecisionTreeClassifier`](https://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeClassifier.html)
        - 範例：[iris_classification](https://github.com/yalonw/Machine_Learning/blob/master/classification.ipynb)
      - [`sklearn.naive_bayes.MultinomialNB`](https://scikit-learn.org/stable/modules/generated/sklearn.naive_bayes.MultinomialNB.html)（文字型資料）
@@ -114,5 +115,10 @@
 
   3. **回歸（regression）**：  
      - 監督式學習：必有答案的計算題（有大小關係），如明天降雨機率多少
+     - 選擇**簡單的**演算法看大趨勢就好，若是太複雜的演算法會有過擬合的問題
      - [`sklearn.tree.DecisionTreeRegressor`](https://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeRegressor.html)
        - 範例：[boston_regression](https://github.com/yalonw/Machine_Learning/blob/master/regression.ipynb)
+     - [`sklearn.ensemble.RandomForestRegressor`](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html)
+       - 範例：[house_price](https://github.com/yalonw/Machine_Learning/blob/master/house_price.ipynb)     
+     - [`sklearn.linear_model`](https://scikit-learn.org/stable/modules/linear_model.html)
+       - 範例：[house_price_linear](https://github.com/yalonw/Machine_Learning/blob/master/house_price_linear.ipynb)   
