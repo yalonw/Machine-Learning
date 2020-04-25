@@ -122,3 +122,17 @@
        - 範例：[house_price](https://github.com/yalonw/Machine_Learning/blob/master/house_price.ipynb)     
      - [`sklearn.linear_model`](https://scikit-learn.org/stable/modules/linear_model.html)
        - 範例：[house_price_linear](https://github.com/yalonw/Machine_Learning/blob/master/house_price_linear.ipynb)   
+
+</br></br>
+
+# 範例程式
+> 請按順序學習，每個範例中都有更深入的解釋 :blush:
+1. DecisionTree：[iris_classification](https://github.com/yalonw/Machine_Learning/blob/master/classification.ipynb)
+2. DecisionTree：[boston_regression](https://github.com/yalonw/Machine_Learning/blob/master/regression.ipynb)
+3. KMeans：[iris_cluster](https://github.com/yalonw/Machine_Learning/blob/master/cluster.ipynb)
+4. Naïve-Bayes：[poem_naive_bayes](https://github.com/yalonw/Machine_Learning/blob/master/poem_naive_bayes.ipynb)
+5. Naïve-Bayes：[news_naive_bayes](https://github.com/yalonw/Machine_Learning/blob/master/news_naive_bayes.ipynb)
+6. RandomForest：[titanic_randomforest_classification](https://github.com/yalonw/Machine_Learning/blob/master/titanic_randomforest.ipynb)
+7. KNN：[titanic_k-nearest_neighbors](https://github.com/yalonw/Machine_Learning/blob/master/titanic_k-nearest_neighbors.ipynb)
+8. RandomForest：[house_price_regression](https://github.com/yalonw/Machine_Learning/blob/master/house_price.ipynb) 
+9. Linear-model：[house_price_linear](https://github.com/yalonw/Machine_Learning/blob/master/house_price_linear.ipynb)   
